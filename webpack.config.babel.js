@@ -3,7 +3,7 @@ export default {
     extensions: ['', '.js', 'jsx'],
   },
   devtool: "cheap-eval-source-map",
-  entry: ['./src/main.jsx'],
+  entry: ['./src/signup.jsx'],
   output: {
     path: 'dist',
     filename: 'main.bundle.js'

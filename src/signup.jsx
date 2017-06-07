@@ -1,22 +1,5 @@
-import {Config, CognitoIdentityCredentials} from "aws-sdk";
-import {
-  CognitoUserPool,
-  CognitoUserAttribute
-} from "amazon-cognito-identity-js";
-import React from "react";
-import ReactDOM from "react-dom";
-//import appConfig from "./config";
-import appConfig from "./cognito-config";
+import {React, ReactDOM, userPool} from "./pool.js";
 
-Config.region = appConfig.region;
-Config.credentials = new CognitoIdentityCredentials({
-  IdentityPoolId: appConfig.IdentityPoolId
-});
-
-const userPool = new CognitoUserPool({
-  UserPoolId: appConfig.UserPoolId,
-  ClientId: appConfig.ClientId,
-});
 
 class SignUpForm extends React.Component {
   constructor(props) {
