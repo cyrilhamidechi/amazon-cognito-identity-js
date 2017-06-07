@@ -1,4 +1,4 @@
-import {React, ReactDOM, userPool} from "./pool.js";
+import {CognitoUserAttribute, React, ReactDOM, userPool} from "./pool.js";
 
 
 class SignUpForm extends React.Component {
