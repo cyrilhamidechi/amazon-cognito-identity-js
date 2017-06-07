@@ -1,7 +1,10 @@
 /node_modules/
+/dist/
 npm-debug.log
 
 /docs/
 
 es
 lib
+
+src/cognito-config.js

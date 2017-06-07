@@ -5,7 +5,8 @@ import {
 } from "amazon-cognito-identity-js";
 import React from "react";
 import ReactDOM from "react-dom";
-import appConfig from "./config";
+//import appConfig from "./config";
+import appConfig from "./cognito-config";
 
 Config.region = appConfig.region;
 Config.credentials = new CognitoIdentityCredentials({
