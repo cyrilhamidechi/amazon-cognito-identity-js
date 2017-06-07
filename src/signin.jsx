@@ -1,4 +1,4 @@
-import {CognitoUserAttribute, React, ReactDOM, userPool} from "./pool.js";
+import {CognitoUserAttribute, React, ReactDOM, userPool, CognitoUser, AuthenticationDetails} from "./pool.js";
 
 
 class SignInForm extends React.Component {
@@ -26,12 +26,12 @@ class SignInForm extends React.Component {
         Username : username,
         Pool : userPool
     };
-    var cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser(userData);
+    var cognitoUser = new CognitoUser(userData);
     var authenticationData = {
         Username : username,
         Password : password,
     };
-    var authenticationDetails = new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails(authenticationData);
+    var authenticationDetails = new AuthenticationDetails(authenticationData);
     cognitoUser.authenticateUser(authenticationDetails, {
         onSuccess: function (result) {
             console.log('access token + ' + result.getAccessToken().getJwtToken());
