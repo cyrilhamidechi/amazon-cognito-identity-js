@@ -55,5 +55,6 @@ class SignUpForm extends React.Component {
   }
 }
 
-ReactDOM.render(<SignUpForm />, document.getElementById('app'));
+//ReactDOM.render(<SignUpForm />, document.getElementById('app'));
+ReactDOM.render(<SignUpForm />, document.getElementById('signup'));
 
