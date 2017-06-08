@@ -1,9 +1,10 @@
 // Use case 4.
 // Authenticating a user and establishing a user session with the Amazon Cognito Identity service.
 
+import {React, ReactDOM} from "./lib/react.js";
+
 import {userPool, CognitoIdentityCredentials, Config, appConfig} from "./lib/cognito-pool.js";
 import {CognitoUserAttribute, CognitoUser, AuthenticationDetails} from "./lib/cognito-user.js";
-import {React, ReactDOM} from "./lib/react.js";
 
 
 class SignInForm extends React.Component {

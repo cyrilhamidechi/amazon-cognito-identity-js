@@ -2,9 +2,10 @@
 // Registering a user with the application.
 // One needs to create a CognitoUserPool object by providing a UserPoolId and a ClientId and signing up by using a username, password, attribute list, and validation data.
 
+import {React, ReactDOM} from "./lib/react.js";
+
 import {userPool} from "./lib/cognito-pool.js";
 import {CognitoUserAttribute} from "./lib/cognito-user.js";
-import {React, ReactDOM} from "./lib/react.js";
 
 
 class SignUpForm extends React.Component {

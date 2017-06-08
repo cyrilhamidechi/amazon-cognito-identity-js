@@ -1,9 +1,10 @@
 // Use case 2.
 // Confirming a registered, unauthenticated user using a confirmation code received via SMS.
 
+import {React, ReactDOM} from "./lib/react.js";
+
 import {userPool} from "./lib/cognito-pool.js";
 import {CognitoUser} from "./lib/cognito-user.js";
-import {React, ReactDOM} from "./lib/react.js";
 
 
 class ConfirmRegistrationForm extends React.Component {
