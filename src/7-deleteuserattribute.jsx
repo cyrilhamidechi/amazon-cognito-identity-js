@@ -8,10 +8,6 @@ class DeleteUserAttributeForm extends React.Component {
     super(props);
   }
 
-  handleUsernameChange(e) {
-    this.setState({username: e.target.value});
-  }
-
   handleSubmit(e) {
     e.preventDefault();
     var attributeList = [];

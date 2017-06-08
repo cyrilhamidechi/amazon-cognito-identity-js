@@ -5,7 +5,7 @@ extensions: ['', '.js', 'jsx'],
         devtool: "cheap-eval-source-map",
         entry: [
           './src/1-signup.jsx', './src/2-confirmregistration.jsx', './src/3-resendconfirmation.jsx', './src/4-signin.jsx',
-          './src/5-getuserattributes.jsx', './src/6-verifyuserattribute.jsx', './src/7-deleteuserattribute.jsx'],
+          './src/5-getuserattributes.jsx', './src/6-verifyuserattribute.jsx', './src/7-deleteuserattribute.jsx', './src/8-updateuserattribute.jsx'],
         output: {
         path: 'dist',
                 filename: 'main.bundle.js'
