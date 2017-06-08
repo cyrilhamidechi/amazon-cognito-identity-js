@@ -31,14 +31,12 @@ class ConfirmRegistrationForm extends React.Component {
         Pool : userPool
     };
     var cognitoUser = new CognitoUser(userData);
-    cognitoUser.confirmRegistration(this.state.code.trim(), true, {
-        onSuccess: function (result) {
-            console.log('call result: ' + result);
-        },
-        onFailure: function(err) {
+    cognitoUser.confirmRegistration(this.state.code.trim(), true, function(err, result) {
+        if (err) {
             alert(err);
-        },
-
+            return;
+        }
+        console.log('call result: ' + result);
     });
   }
 
