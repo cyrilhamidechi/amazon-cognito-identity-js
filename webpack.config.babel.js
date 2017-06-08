@@ -3,7 +3,7 @@ resolve: {
 extensions: ['', '.js', 'jsx'],
         },
         devtool: "cheap-eval-source-map",
-        entry: ['./src/signup.jsx', './src/signin.jsx'],
+        entry: ['./src/signup.jsx', './src/signin.jsx', './src/confirmregistration.jsx'],
         output: {
         path: 'dist',
                 filename: 'main.bundle.js'

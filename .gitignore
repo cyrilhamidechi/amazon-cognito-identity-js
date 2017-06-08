@@ -6,5 +6,6 @@ npm-debug.log
 
 es
 
-src/cognito-config.js
+*/cognito-config.js
 /nbproject/
+*.sublime-*
