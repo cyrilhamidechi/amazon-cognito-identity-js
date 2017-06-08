@@ -1,6 +1,3 @@
-// Use case 2.
-// Confirming a registered, unauthenticated user using a confirmation code received via SMS.
-
 import {React, ReactDOM} from "./lib/react.js";
 
 import {userPool} from "./lib/cognito-pool.js";
@@ -42,17 +39,22 @@ class ConfirmRegistrationForm extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit.bind(this)}>
-        <input type="text"
-               value={this.state.username}
-               placeholder="Username"
-               onChange={this.handleUsernameChange.bind(this)}/>
-        <input type="text"
-               value={this.state.code}
-               placeholder="SMS code"
-               onChange={this.handleCodeChange.bind(this)}/>
-        <input type="submit"/>
-      </form>
+        <div>
+            <h3>2 - Confirm registration</h3>
+            <small>Confirming a registered, unauthenticated user using a confirmation code received via SMS.</small>
+            <form onSubmit={this.handleSubmit.bind(this)}>
+              <input type="text"
+                     value={this.state.username}
+                     placeholder="Username"
+                     onChange={this.handleUsernameChange.bind(this)}/>
+              <input type="text"
+                     value={this.state.code}
+                     placeholder="SMS code"
+                     onChange={this.handleCodeChange.bind(this)}/>
+              <input type="submit"/>
+            </form>
+            <hr />
+        </div>
     );
   }
 }

@@ -1,6 +1,3 @@
-// Use case 4.
-// Authenticating a user and establishing a user session with the Amazon Cognito Identity service.
-
 import {React, ReactDOM} from "./lib/react.js";
 
 import {userPool, CognitoIdentityCredentials, Config, appConfig} from "./lib/cognito-pool.js";
@@ -62,22 +59,27 @@ class SignInForm extends React.Component {
 
     });
   }
-//Note that if device tracking is enabled for the user pool with a setting that user opt-in is required, you need to implement an onSuccess(result, userConfirmationNecessary) callback, collect user input and call either setDeviceStatusRemembered to remember the device or setDeviceStatusNotRemembered to not remember the device.
-//Note also that if CognitoUser.authenticateUser throws ReferenceError: navigator is not defined when running on Node.js, follow the instructions on the following Stack Overflow post.
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit.bind(this)}>
-        <input type="text"
-               value={this.state.username}
-               placeholder="Username"
-               onChange={this.handleUsernameChange.bind(this)}/>
-        <input type="password"
-               value={this.state.password}
-               placeholder="Password"
-               onChange={this.handlePasswordChange.bind(this)}/>
-        <input type="submit"/>
-      </form>
+        <div>
+            <h3>4 - Sign in</h3>
+            <small>Authenticating a user and establishing a user session with the Amazon Cognito Identity service.</small>
+            <br /><small>Note that if device tracking is enabled for the user pool with a setting that user opt-in is required, you need to implement an onSuccess(result, userConfirmationNecessary) callback, collect user input and call either setDeviceStatusRemembered to remember the device or setDeviceStatusNotRemembered to not remember the device.</small>
+            <br /><small>Note also that if CognitoUser.authenticateUser throws ReferenceError: navigator is not defined when running on Node.js, follow the instructions on the following Stack Overflow post.</small>
+            <form onSubmit={this.handleSubmit.bind(this)}>
+              <input type="text"
+                     value={this.state.username}
+                     placeholder="Username"
+                     onChange={this.handleUsernameChange.bind(this)}/>
+              <input type="password"
+                     value={this.state.password}
+                     placeholder="Password"
+                     onChange={this.handlePasswordChange.bind(this)}/>
+              <input type="submit"/>
+            </form>
+            <hr />
+        </div>
     );
   }
 }

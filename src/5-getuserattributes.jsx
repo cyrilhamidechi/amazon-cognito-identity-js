@@ -1,6 +1,3 @@
-// Use case 5.
-// Retrieve user attributes for an authenticated user.
-
 import {React, ReactDOM} from "./lib/react.js";
 
 import {fakeUser} from "./lib/cognito-fakeuser.js";
@@ -26,9 +23,14 @@ class GetUserAttributesForm extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit.bind(this)}>
-        <input type="submit"/>
-      </form>
+        <div>
+            <h3>5 - Get user attributes</h3>
+            <small>Retrieve user attributes for an authenticated user.</small>
+            <form onSubmit={this.handleSubmit.bind(this)}>
+              <input type="submit"/>
+            </form>
+            <hr />
+        </div>
     );
   }
 }

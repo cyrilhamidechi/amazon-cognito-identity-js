@@ -1,6 +1,3 @@
-// Use case 3.
-// Resending a confirmation code via SMS for confirming registration for a unauthenticated user.
-
 import {React, ReactDOM} from "./lib/react.js";
 
 import {userPool} from "./lib/cognito-pool.js";
@@ -37,13 +34,18 @@ class ResendConfirmationForm extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit.bind(this)}>
-        <input type="text"
-               value={this.state.username}
-               placeholder="Username"
-               onChange={this.handleUsernameChange.bind(this)}/>
-        <input type="submit"/>
-      </form>
+        <div>
+            <h3>3 - Resending confirmation</h3>
+            <small>Resending a confirmation code via SMS for confirming registration for a unauthenticated user.</small>
+            <form onSubmit={this.handleSubmit.bind(this)}>
+              <input type="text"
+                     value={this.state.username}
+                     placeholder="Username"
+                     onChange={this.handleUsernameChange.bind(this)}/>
+              <input type="submit"/>
+            </form>
+            <hr />
+        </div>
     );
   }
 }

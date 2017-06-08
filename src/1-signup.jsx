@@ -1,7 +1,3 @@
-// Use case 1.
-// Registering a user with the application.
-// One needs to create a CognitoUserPool object by providing a UserPoolId and a ClientId and signing up by using a username, password, attribute list, and validation data.
-
 import {React, ReactDOM} from "./lib/react.js";
 
 import {userPool} from "./lib/cognito-pool.js";
@@ -47,17 +43,23 @@ class SignUpForm extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit.bind(this)}>
-        <input type="text"
-               value={this.state.email}
-               placeholder="Email"
-               onChange={this.handleEmailChange.bind(this)}/>
-        <input type="password"
-               value={this.state.password}
-               placeholder="Password"
-               onChange={this.handlePasswordChange.bind(this)}/>
-        <input type="submit"/>
-      </form>
+        <div>
+            <h3>1 - Sign up</h3>
+            <small>Registering a user with the application.</small>
+            <br /><small>One needs to create a CognitoUserPool object by providing a UserPoolId and a ClientId and signing up by using a username, password, attribute list, and validation data.</small>
+            <form onSubmit={this.handleSubmit.bind(this)}>
+              <input type="text"
+                     value={this.state.email}
+                     placeholder="Email"
+                     onChange={this.handleEmailChange.bind(this)}/>
+              <input type="password"
+                     value={this.state.password}
+                     placeholder="Password"
+                     onChange={this.handlePasswordChange.bind(this)}/>
+              <input type="submit"/>
+            </form>
+            <hr />
+        </div>
     );
   }
 }
