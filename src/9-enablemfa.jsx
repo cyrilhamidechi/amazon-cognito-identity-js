@@ -23,6 +23,7 @@ class EnableMfaForm extends React.Component {
     return (
         <div>
             <h3>9 - Enable MFA</h3>
+            <small>Enabling MFA for a user on a pool that has an optional MFA setting for an authenticated user.</small>
             <form onSubmit={this.handleSubmit.bind(this)}>
               <input type="submit"/>
             </form>
