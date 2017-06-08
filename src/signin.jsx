@@ -1,4 +1,4 @@
-import {userPool} from "./lib/cognito-pool.js";
+import {userPool, CognitoIdentityCredentials, Config, appConfig} from "./lib/cognito-pool.js";
 import {CognitoUserAttribute, CognitoUser, AuthenticationDetails} from "./lib/cognito-user.js";
 import {React, ReactDOM} from "./lib/react.js";
 
@@ -38,14 +38,12 @@ class SignInForm extends React.Component {
         onSuccess: function (result) {
             console.log('access token + ' + result.getAccessToken().getJwtToken());
 
-            //POTENTIAL: Region needs to be set if not already set previously elsewhere.
-            AWS.config.region = '<region>';
-
-            AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-                IdentityPoolId : '...', // your identity pool id here
+            const endpoint = 'cognito-idp.' + Config.region + '.amazonaws.com/' + appConfig.IdentityPoolId;
+            Config.credentials = new CognitoIdentityCredentials({
+                IdentityPoolId : appConfig.IdentityPoolId,
                 Logins : {
                     // Change the key below according to the specific region your user pool is in.
-                    'cognito-idp.<region>.amazonaws.com/<YOUR_USER_POOL_ID>' : result.getIdToken().getJwtToken()
+                    endpoint : result.getIdToken().getJwtToken()
                 }
             });
 
