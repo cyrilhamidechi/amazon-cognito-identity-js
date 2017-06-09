@@ -28,8 +28,12 @@ class VerifyUserAttributeForm extends React.Component {
     return (
         <div>
             <h3>6 - Verify user attribute</h3>
-            <small>Verify user attribute for an authenticated user.</small>
-            <br /><small>Note that the inputVerificationCode method needs to be defined but does not need to actually do anything. If you would like the user to input the verification code on another page, you can set inputVerificationCode to null. If inputVerificationCode is null, onSuccess will be called immediately (assuming there is no error).</small>
+            <small>
+                Verify user attribute for an authenticated user.
+                <br />Note that the inputVerificationCode method needs to be defined but does not need to actually do anything.
+                <br />If you would like the user to input the verification code on another page, you can set inputVerificationCode to null.
+                <br />If inputVerificationCode is null, onSuccess will be called immediately (assuming there is no error).
+            </small>
             <form onSubmit={this.handleSubmit.bind(this)}>
               <input type="submit"/>
             </form>

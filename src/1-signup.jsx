@@ -45,8 +45,10 @@ class SignUpForm extends React.Component {
     return (
         <div>
             <h3>1 - Sign up</h3>
-            <small>Registering a user with the application.</small>
-            <br /><small>One needs to create a CognitoUserPool object by providing a UserPoolId and a ClientId and signing up by using a username, password, attribute list, and validation data.</small>
+            <small>
+                Registering a user with the application.
+                <br />One needs to create a CognitoUserPool object by providing a UserPoolId and a ClientId and signing up by using a username, password, attribute list, and validation data.
+            </small>
             <form onSubmit={this.handleSubmit.bind(this)}>
               <input type="text"
                      value={this.state.email}
