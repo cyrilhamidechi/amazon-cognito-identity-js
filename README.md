@@ -508,8 +508,8 @@ Note that the inputVerificationCode method needs to be defined but does not need
 
 ## Basic roadmap
 Note for myself:
-- [ ] make each demo script point to a usable form (mainly blind dev)
-- [ ] make forms work and dynamic (if static data)
+- [x] make each demo script point to a usable form (mainly blind dev)
+- [.] make forms work and dynamic (if static data)
 - [ ] refactoring forms (repetitive fields handling, ...) and adding better practices
 - [ ] show / hide forms depending on the login status
 - [ ] make signup form dynamic based on AWS Cognito form prefs (if possible, else make frontend flexible and config-driven)

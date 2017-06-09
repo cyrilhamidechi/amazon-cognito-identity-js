@@ -41,7 +41,7 @@ class ConfirmRegistrationForm extends React.Component {
     return (
         <div>
             <h3>2 - Confirm registration</h3>
-            <small>Confirming a registered, unauthenticated user using a confirmation code received via SMS.</small>
+            <small>Confirming a registered unauthenticated user using a confirmation code received (email or SMS).</small>
             <form onSubmit={this.handleSubmit.bind(this)}>
               <input type="text"
                      value={this.state.username}
