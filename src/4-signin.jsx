@@ -39,11 +39,11 @@ class SignInForm extends React.Component {
         onSuccess: (result) => {
             console.log('access token + ' + result.getAccessToken().getJwtToken());
 
+            // Change the key below according to the specific region your user pool is in.
             const endpoint = 'cognito-idp.' + Config.region + '.amazonaws.com/' + appConfig.IdentityPoolId;
             Config.credentials = new CognitoIdentityCredentials({
                 IdentityPoolId : appConfig.IdentityPoolId,
                 Logins : {
-                    // Change the key below according to the specific region your user pool is in.
                     endpoint : result.getIdToken().getJwtToken()
                 }
             });
