@@ -10,7 +10,7 @@ class EnableMfaForm extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    fakeUser.enableMFA(function(err, result) {
+    fakeUser.enableMFA((err, result) => {
         if (err) {
             alert(err);
             return;

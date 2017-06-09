@@ -13,7 +13,7 @@ class DeleteUserAttributeForm extends React.Component {
     var attributeList = [];
     attributeList.push('nickname');
 
-    fakeUser.deleteAttributes(attributeList, function(err, result) {
+    fakeUser.deleteAttributes(attributeList, (err, result) => {
         if (err) {
             alert(err);
             return;

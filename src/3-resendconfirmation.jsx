@@ -23,7 +23,7 @@ class ResendConfirmationForm extends React.Component {
         Pool : userPool
     };
     var cognitoUser = new CognitoUser(userData);
-    cognitoUser.resendConfirmationCode(function(err, result) {
+    cognitoUser.resendConfirmationCode((err, result) => {
         if (err) {
             alert(err);
             return;

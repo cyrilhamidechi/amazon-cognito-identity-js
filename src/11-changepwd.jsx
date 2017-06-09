@@ -22,7 +22,7 @@ class ChangePwdForm extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    fakeUser.changePassword(this.state.oldpwd.trim(), this.state.newpwd.trim(), function(err, result) {
+    fakeUser.changePassword(this.state.oldpwd.trim(), this.state.newpwd.trim(), (err, result) => {
         if (err) {
             alert(err);
             return;

@@ -10,7 +10,7 @@ class DeleteUserForm extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    fakeUser.deleteUser(function(err, result) {
+    fakeUser.deleteUser((err, result) => {
         if (err) {
             alert(err);
             return;

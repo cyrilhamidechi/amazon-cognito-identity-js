@@ -28,7 +28,7 @@ class ConfirmRegistrationForm extends React.Component {
         Pool : userPool
     };
     var cognitoUser = new CognitoUser(userData);
-    cognitoUser.confirmRegistration(this.state.code.trim(), true, function(err, result) {
+    cognitoUser.confirmRegistration(this.state.code.trim(), true, (err, result) => {
         if (err) {
             alert(err);
             return;

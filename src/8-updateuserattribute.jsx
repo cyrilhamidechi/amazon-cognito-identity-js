@@ -19,13 +19,14 @@ class UpdateUserAttributeForm extends React.Component {
     var attribute = new CognitoUserAttribute(attribute);
     attributeList.push(attribute);
 
-    fakeUser.updateAttributes(attributeList, function(err, result) {
+    fakeUser.updateAttributes(attributeList, (err, result) => {
         if (err) {
             alert(err);
             return;
         }
         console.log('call result: ' + result);
-    });  }
+    });
+  }
 
   render() {
     return (

@@ -11,13 +11,13 @@ class VerifyUserAttributeForm extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     fakeUser.getAttributeVerificationCode('email', {
-        onSuccess: function (result) {
+        onSuccess: (result) => {
             console.log('call result: ' + result);
         },
-        onFailure: function(err) {
+        onFailure: (err) => {
             alert(err);
         },
-        inputVerificationCode: function() {
+        inputVerificationCode: () => {
             var verificationCode = prompt('Please input verification code: ' ,'');
             cognitoUser.verifyAttribute('email', verificationCode, this);
         }

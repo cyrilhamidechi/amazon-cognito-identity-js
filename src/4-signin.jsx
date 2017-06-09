@@ -36,7 +36,7 @@ class SignInForm extends React.Component {
     };
     var authenticationDetails = new AuthenticationDetails(authenticationData);
     cognitoUser.authenticateUser(authenticationDetails, {
-        onSuccess: function (result) {
+        onSuccess: (result) => {
             console.log('access token + ' + result.getAccessToken().getJwtToken());
 
             const endpoint = 'cognito-idp.' + Config.region + '.amazonaws.com/' + appConfig.IdentityPoolId;
@@ -53,7 +53,7 @@ class SignInForm extends React.Component {
 
         },
 
-        onFailure: function(err) {
+        onFailure: (err) => {
             alert(err);
         },
 

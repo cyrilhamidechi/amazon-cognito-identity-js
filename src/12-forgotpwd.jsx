@@ -1,5 +1,6 @@
 import {React, ReactDOM} from "./lib/react.js";
 
+import {userPool} from "./lib/cognito-pool.js";
 import {CognitoUser} from "./lib/cognito-user.js";
 
 
@@ -33,14 +34,14 @@ class ForgotPwdForm extends React.Component {
     };
     var cognitoUser = new CognitoUser(userData);
     cognitoUser.forgotPassword({
-        onSuccess: function () {
+        onSuccess: () => {
             // successfully initiated reset password request
         },
-        onFailure: function(err) {
+        onFailure: (err) => {
             alert(err);
         },
         //Optional automatic callback
-        inputVerificationCode: function(data) {
+        inputVerificationCode: (data) => {
             console.log('Code sent to: ' + data);
             var verificationCode = prompt('Please input verification code ' ,'');
             var newPassword = prompt('Enter new password ' ,'');

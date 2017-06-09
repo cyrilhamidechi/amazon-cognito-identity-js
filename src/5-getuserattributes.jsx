@@ -10,7 +10,7 @@ class GetUserAttributesForm extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    fakeUser.getUserAttributes(function(err, result){
+    fakeUser.getUserAttributes((err, result) => {
         if (err) {
             alert(err);
             return;
