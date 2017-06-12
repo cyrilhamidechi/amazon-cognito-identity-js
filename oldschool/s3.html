@@ -1,0 +1,100 @@
+<html>
+    <body>
+        <script src="./aws-cognito-sdk.min.js"></script>
+        <script src="./amazon-cognito-identity.min.js"></script>
+        <script src="./aws-sdk.min.js"></script>
+        <script src="./../noversion/hardcoded.js"></script>
+        <script>
+            var COGNITO_CONF = {
+              region: 'eu-west-1',
+              IdentityPoolId: 'eu-west-1:09cfb9bc-86cf-4aa2-8c0b-dc69614e9527',
+              UserPoolId: 'eu-west-1_9JBYfxf8r',
+              ClientId: '7328r336bblcg28s42hau13u6c'
+            };
+
+            var S3_CONF = {
+              bucketName: 'test-architecture'
+            };
+
+//user creds
+//var USER_CREDS = {
+//  login: '...',
+//  pwd: '...'
+//};
+// if invalid login => user not exist error
+// if valid login but invalid pwd => wrong creds error
+
+            AWS.config.region = COGNITO_CONF.region;
+            AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+              IdentityPoolId: COGNITO_CONF.IdentityPoolId,
+            });
+
+            AWSCognito.config.region = COGNITO_CONF.region;
+            AWSCognito.config.credentials = new AWS.CognitoIdentityCredentials({
+              IdentityPoolId: COGNITO_CONF.IdentityPoolId,
+            });
+
+            var cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser({
+              Username: USER_CREDS.login,
+              Pool: new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool({
+                UserPoolId: COGNITO_CONF.UserPoolId,
+                ClientId: COGNITO_CONF.ClientId
+              })
+            });
+            cognitoUser.authenticateUser(new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails({
+              Username: USER_CREDS.login,
+              Password: USER_CREDS.pwd
+            }), {
+              onSuccess: function (result) {
+
+                AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                  IdentityPoolId: COGNITO_CONF.IdentityPoolId,
+//                  Logins failed when used...
+//                  Logins: {
+//                    endpoint: result.getIdToken().getJwtToken()
+//                  }
+                });
+
+
+                var bucketsList = new AWS.S3();
+                bucketsList.listBuckets(function (err, data) {
+                  if (err) {
+                    console.log("Error:", err);
+                  }
+                  else {
+                    for (var index in data.Buckets) {
+                      var bucket = data.Bucketsindex;
+                      console.log("Bucket: ", bucket.Name, ' : ', bucket.CreationDate);
+                    }
+                  }
+                });
+
+
+                //from http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/s3-example-photo-album.html
+                return;
+                var albumsList = new AWS.S3({
+                  apiVersion: '2006-03-01',
+                  params: {Bucket: S3_CONF.bucketName}
+                });
+                albumsList.listObjects({Delimiter: '/'}, function (err, data) {
+                  if (err) {
+                    return alert('There was an error listing your albums: ' + err.message);
+                  }
+                  else {
+                    var albums = data.CommonPrefixes.map(function (commonPrefix) {
+                      var prefix = commonPrefix.Prefix;
+                      var albumName = decodeURIComponent(prefix.replace('/', ''));
+                      consoel.log(albumName);
+                    });
+                  }
+                });
+
+
+              },
+              onFailure: function (err) {
+                alert("Error:" + err);
+              }
+            });
+        </script>
+    </body>
+</html>
