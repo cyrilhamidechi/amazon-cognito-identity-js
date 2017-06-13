@@ -511,8 +511,26 @@ Note for myself:
 - [x] make each demo script point to a usable form (mainly blind dev)
 - [.] make forms work and dynamic (if static data)
 - [ ] refactoring forms (repetitive fields handling, ...) and adding better practices
-- [ ] show / hide forms depending on the login status
+- [x] show / hide forms depending on the login status
+- [ ] full responsive design it (signup, signin, forgot pwd, resend conf, logged area, user details, AWS features)
+- [ ] custom emails (sender, text, ...)
+- [ ] demo SMS confirmation
+- [ ] demo MFA
 - [ ] make signup form dynamic based on AWS Cognito form prefs (if possible, else make frontend flexible and config-driven)
-- [ ] use Cognito to access to S3
+- [.] use Cognito to access to S3
+ - [x] load S3 bucket
+ - [x] play with bucket
+ - [ ] ensure role delegation is used (http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-service.html)
+ - [ ] ensure enhanced authentication flow is used (http://docs.aws.amazon.com/cognito/latest/developerguide/authentication-flow.html)
+ - [.] allow one S3 root dir per Cognito user (https://aws.amazon.com/blogs/mobile/understanding-amazon-cognito-authentication-part-3-roles-and-policies/)
+ - [ ] demo feature request payers (http://docs.aws.amazon.com/AmazonS3/latest/dev/RequesterPaysBuckets.html)
+- [ ] use various Authentication Providers
+ - [ ] Facebook
+ - [ ] Google+
+ - [ ] Twitter
+ - [ ] OpenID
 - [ ] use Cognito to access to some other AWS services
+ - [ ] Aurora
+ - [ ] DynamoDB
+ - [ ] ElasticSearch
 

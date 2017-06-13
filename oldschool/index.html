@@ -3,12 +3,18 @@
         <div id="logme">
             <input type="text" id="login" placeholder="Login" /> | <input type="password" id="pwd" placeholder="Password" /> | <a href="#" onclick="signIn();">Sign in</a>
         </div>
-        <br /><a id="loadsession" href="#" onclick="loadSession();">load session</a> | <a id="islogged" href="#" onclick="isLogged();">is logged</a> | <a id="s3" href="#" onclick="s3();">s3</a> | <a id="logout" href="#" onclick="logout();">logout</a>
-        <script src="./aws-cognito-sdk.min.js"></script>
-        <script src="./amazon-cognito-identity.min.js"></script>
-        <script src="./aws-sdk.min.js"></script>
+        <div id="s3">
+            <h3>My S3 bucket</h3>
+            <div id="s3content"></div>
+        </div>
+        <div><a id="loadsession" href="#" onclick="loadSession();">load session</a> | <a id="islogged" href="#" onclick="isLogged();">is logged</a> | <a id="logout" href="#" onclick="logout();">logout</a></div>
+        <script src="./lib/aws-cognito-sdk.min.js"></script>
+        <script src="./lib/amazon-cognito-identity.min.js"></script>
+        <script src="./lib/aws-sdk.min.js"></script>
+        <script src="./s3.js"></script>
         <script src="./../noversion/hardcoded.js"></script>
         <script>
+            
             var COGNITO_CONF = {
               region: 'eu-west-1',
               IdentityPoolId: 'eu-west-1:09cfb9bc-86cf-4aa2-8c0b-dc69614e9527',
@@ -16,11 +22,9 @@
               ClientId: '7328r336bblcg28s42hau13u6c'
             };
 
-            var S3_CONF = {
-              bucketName: 'test-architecture'
-            };
 
             var cognitoUser = null;
+
 
             function initContext() {
 
@@ -31,6 +35,7 @@
                 });
                 
             }
+
 
             function loadSession() {
 
@@ -53,12 +58,12 @@
                   return;
                 }
 
-                console.log(session);
-                setCreds(cognitoUser.signInUserSession.idToken.jwtToken);
+                setCreds(session.idToken.jwtToken);
 
               });
 
             }
+
 
             function showLoginForm() {
                 
@@ -141,39 +146,25 @@
                 console.log(result);
                 console.log('creds ok');
                 UI.showLoggedMenu();
+                loadS3();
               });
 
             }
-
-
-            function s3() {
-
-              //from http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/s3-example-photo-album.html
-              var albumsList = new AWS.S3({
-                apiVersion: '2006-03-01',
-                params: {Bucket: S3_CONF.bucketName}
-              });
-              albumsList.listObjects({Delimiter: '/'}, function (err, data) {
-                if (err) {
-                  console.log('There was an error listing your albums: ' + err.message);
-                  return;
-                }
-                console.log(data);
-                data.CommonPrefixes.map(function (commonPrefix) {
-                  var prefix = commonPrefix.Prefix;
-                  var albumName = decodeURIComponent(prefix.replace('/', ''));
-                  console.log(albumName);
-                });
-              });
+            
+            
+            function loadS3() {
+                UI.show('s3');
+                listAlbums();
             }
 
-
+       function getHtml(template) {
+          return template.join('\n');
+       }
             var UI = {
                 
               showLoggedMenu: function () {
                 UI.hide('logme');
                 UI.hide('loadsession');
-                UI.show('s3');
                 UI.show('logout');
               },
               
