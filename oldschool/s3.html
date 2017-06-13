@@ -1,5 +1,9 @@
 <html>
-    <body>
+    <body onload="initContext(); loadSession();">
+        <div id="logme">
+            <input type="text" id="login" placeholder="Login" /> | <input type="password" id="pwd" placeholder="Password" /> | <a href="#" onclick="signIn();">Sign in</a>
+        </div>
+        <br /><a id="loadsession" href="#" onclick="loadSession();">load session</a> | <a id="islogged" href="#" onclick="isLogged();">is logged</a> | <a id="s3" href="#" onclick="s3();">s3</a> | <a id="logout" href="#" onclick="logout();">logout</a>
         <script src="./aws-cognito-sdk.min.js"></script>
         <script src="./amazon-cognito-identity.min.js"></script>
         <script src="./aws-sdk.min.js"></script>
@@ -16,85 +20,185 @@
               bucketName: 'test-architecture'
             };
 
-//user creds
-//var USER_CREDS = {
-//  login: '...',
-//  pwd: '...'
-//};
-// if invalid login => user not exist error
-// if valid login but invalid pwd => wrong creds error
+            var cognitoUser = null;
 
-            AWS.config.region = COGNITO_CONF.region;
-            AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-              IdentityPoolId: COGNITO_CONF.IdentityPoolId,
-            });
+            function initContext() {
 
-            AWSCognito.config.region = COGNITO_CONF.region;
-            AWSCognito.config.credentials = new AWS.CognitoIdentityCredentials({
-              IdentityPoolId: COGNITO_CONF.IdentityPoolId,
-            });
+                cognitoUser = null;
+                AWS.config.region = COGNITO_CONF.region;
+                AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                  IdentityPoolId: COGNITO_CONF.IdentityPoolId
+                });
+                
+            }
 
-            var cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser({
-              Username: USER_CREDS.login,
-              Pool: new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool({
+            function loadSession() {
+
+              UI.hide('loadsession');
+
+              var userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool({
                 UserPoolId: COGNITO_CONF.UserPoolId,
                 ClientId: COGNITO_CONF.ClientId
-              })
-            });
-            cognitoUser.authenticateUser(new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails({
-              Username: USER_CREDS.login,
-              Password: USER_CREDS.pwd
-            }), {
-              onSuccess: function (result) {
+              });
+              cognitoUser = userPool.getCurrentUser();
 
-                AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-                  IdentityPoolId: COGNITO_CONF.IdentityPoolId,
-//                  Logins failed when used...
-//                  Logins: {
-//                    endpoint: result.getIdToken().getJwtToken()
-//                  }
-                });
-
-
-                var bucketsList = new AWS.S3();
-                bucketsList.listBuckets(function (err, data) {
-                  if (err) {
-                    console.log("Error:", err);
-                  }
-                  else {
-                    for (var index in data.Buckets) {
-                      var bucket = data.Bucketsindex;
-                      console.log("Bucket: ", bucket.Name, ' : ', bucket.CreationDate);
-                    }
-                  }
-                });
-
-
-                //from http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/s3-example-photo-album.html
+              if (!cognitoUser) {
+                showLoginForm();
                 return;
-                var albumsList = new AWS.S3({
-                  apiVersion: '2006-03-01',
-                  params: {Bucket: S3_CONF.bucketName}
-                });
-                albumsList.listObjects({Delimiter: '/'}, function (err, data) {
-                  if (err) {
-                    return alert('There was an error listing your albums: ' + err.message);
-                  }
-                  else {
-                    var albums = data.CommonPrefixes.map(function (commonPrefix) {
-                      var prefix = commonPrefix.Prefix;
-                      var albumName = decodeURIComponent(prefix.replace('/', ''));
-                      consoel.log(albumName);
-                    });
-                  }
-                });
-
-
-              },
-              onFailure: function (err) {
-                alert("Error:" + err);
               }
-            });
+
+              cognitoUser.getSession(function (err, session) {
+                if (err) {
+                  alert(err);
+                  return;
+                }
+
+                console.log(session);
+                setCreds(cognitoUser.signInUserSession.idToken.jwtToken);
+
+              });
+
+            }
+
+            function showLoginForm() {
+                
+              document.getElementById('login').value = USER_CREDS.login;
+              document.getElementById('pwd').value = USER_CREDS.pwd;
+              UI.hideLoggedMenu();
+              
+            }
+
+
+            function signIn() {
+
+              cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser({
+                Username: USER_CREDS.login,
+                Pool: new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool({
+                  UserPoolId: COGNITO_CONF.UserPoolId,
+                  ClientId: COGNITO_CONF.ClientId
+                })
+              });
+
+              cognitoUser.authenticateUser(new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails({
+                Username: document.getElementById('login').value,
+                Password: document.getElementById('pwd').value
+              }), {
+                onSuccess: function (result) {
+                  setCreds(result.getIdToken().getJwtToken());
+                },
+                onFailure: function (err) {
+                  alert("Error:" + err);
+                }
+              });
+
+            }
+
+
+            function logout() {
+
+              UI.hide('logout');
+
+              if (cognitoUser) {
+                cognitoUser.signOut();
+              }
+
+              initContext();
+              isLogged();
+
+            }
+
+
+            function setCreds(jwtToken) {
+
+              var logins = {}
+              logins['cognito-idp.' + COGNITO_CONF.region + '.amazonaws.com/' + COGNITO_CONF.UserPoolId] = jwtToken;
+
+              AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                IdentityPoolId: COGNITO_CONF.IdentityPoolId,
+                Logins: logins
+              });
+
+              isLogged();
+
+            }
+
+
+            function isLogged() {
+
+              if (!AWS.config.credentials || !cognitoUser) {
+                alert('Not logged');
+                UI.hideLoggedMenu();
+                return;
+              }
+
+              AWS.config.credentials.refresh(function (err, result) {
+                console.log(err);
+                if (err) {
+                  UI.hideLoggedMenu();
+                  alert(err);
+                  return;
+                }
+                console.log(result);
+                console.log('creds ok');
+                UI.showLoggedMenu();
+              });
+
+            }
+
+
+            function s3() {
+
+              //from http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/s3-example-photo-album.html
+              var albumsList = new AWS.S3({
+                apiVersion: '2006-03-01',
+                params: {Bucket: S3_CONF.bucketName}
+              });
+              albumsList.listObjects({Delimiter: '/'}, function (err, data) {
+                if (err) {
+                  console.log('There was an error listing your albums: ' + err.message);
+                  return;
+                }
+                console.log(data);
+                data.CommonPrefixes.map(function (commonPrefix) {
+                  var prefix = commonPrefix.Prefix;
+                  var albumName = decodeURIComponent(prefix.replace('/', ''));
+                  console.log(albumName);
+                });
+              });
+            }
+
+
+            var UI = {
+                
+              showLoggedMenu: function () {
+                UI.hide('logme');
+                UI.hide('loadsession');
+                UI.show('s3');
+                UI.show('logout');
+              },
+              
+              hideLoggedMenu: function () {
+                UI.show('logme');
+                UI.show('loadsession');
+                UI.hide('s3');
+                UI.hide('logout');
+              },
+              
+              show: function (id) {
+                UI.toggleDisplay(id, 'inline');
+              },
+              
+              hide: function (id) {
+                UI.toggleDisplay(id, 'none');
+              },
+              
+              toggleDisplay: function (id, display) {
+                document.getElementById(id).style.display = display;
+              }
+              
+            }
+            
+            
         </script>
     </body>
 </html>
