@@ -516,12 +516,13 @@ Note for myself:
 - [ ] custom emails (sender, text, ...)
 - [ ] demo SMS confirmation
 - [ ] demo MFA
+- [ ] demo Cognito Sync
 - [ ] make signup form dynamic based on AWS Cognito form prefs (if possible, else make frontend flexible and config-driven)
 - [.] use Cognito to access to S3
  - [x] load S3 bucket
  - [x] play with bucket
- - [ ] ensure role delegation is used (http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-service.html)
- - [ ] ensure enhanced authentication flow is used (http://docs.aws.amazon.com/cognito/latest/developerguide/authentication-flow.html)
+ - [x] ensure role delegation is used (http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-service.html)
+ - [x] ensure enhanced authentication flow is used (http://docs.aws.amazon.com/cognito/latest/developerguide/authentication-flow.html)
  - [.] allow one S3 root dir per Cognito user (https://aws.amazon.com/blogs/mobile/understanding-amazon-cognito-authentication-part-3-roles-and-policies/)
  - [ ] demo feature request payers (http://docs.aws.amazon.com/AmazonS3/latest/dev/RequesterPaysBuckets.html)
 - [ ] use various Authentication Providers
