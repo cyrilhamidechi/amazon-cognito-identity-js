@@ -39,14 +39,7 @@ class SignInForm extends React.Component {
         onSuccess: (result) => {
             console.log('access token + ' + result.getAccessToken().getJwtToken());
 
-            // Change the key below according to the specific region your user pool is in.
-console.log(Config.Endpoint);
-            Config.credentials = new CognitoIdentityCredentials({
-                IdentityPoolId : appConfig.IdentityPoolId,
-                Logins : {
-                    endpoint : result.getIdToken().getJwtToken()
-                }
-            });
+            Config.addLogins();
 
             // Instantiate aws sdk service objects now that the credentials have been updated.
             // example: var s3 = new AWS.S3();

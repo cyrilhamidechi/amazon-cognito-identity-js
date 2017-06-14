@@ -13,4 +13,13 @@ const userPool = new CognitoUserPool({
   ClientId: appConfig.ClientId
 });
 
+Config.addLogins = () => {
+  new CognitoIdentityCredentials({
+    IdentityPoolId : appConfig.IdentityPoolId,
+    Logins : {
+      'cognito-idp.eu-west-1.amazonaws.com/eu-west-1:09cfb9bc-86cf-4aa2-8c0b-dc69614e9527': result.getIdToken().getJwtToken()
+    }
+  });
+}
+
 export {Config, appConfig, CognitoIdentityCredentials, CognitoUserPool, userPool}

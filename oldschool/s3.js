@@ -14,12 +14,13 @@ function initBucket() {
     apiVersion: '2006-03-01',
     params: {Bucket: S3_CONF.bucketName}
   });
+document.getElementById('s3content').innerHTML = '';
 }
 
 
-function listAlbums() {
+function listAlbums(folder = '') {
   initBucket();
-  albumsList.listObjects({Delimiter: '/'}, function (err, data) {
+  albumsList.listObjects({Delimiter: '/', Prefix: folder}, function (err, data) {
     if (err) {
       return alert('There was an error listing your albums: ' + err.message);
     }

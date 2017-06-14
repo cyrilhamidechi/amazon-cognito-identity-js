@@ -23,21 +23,24 @@ class GetUserFromLocalForm extends React.Component {
 
              // NOTE: getSession must be called to authenticate user before calling getUserAttributes
              cognitoUser.getUserAttributes((err, attributes) => {
-                 if (err) {
-                     // Handle error
-                 } else {
-                     // Do something with attributes
-                 }
+                if (err) {
+                  alert(err);
+                  return;
+                }
+                console.log('attributes: ' + attributes);
+                for (i = 0; i < attributes.length; i++) {
+                  console.log('attribute ' + attributes[i].getName() + ' has value ' + attributes[i].getValue());
+                }
              });
 
             // Change the key below according to the specific region your user pool is in.
-            const endpoint = 'cognito-idp.' + Config.region + '.amazonaws.com/' + appConfig.IdentityPoolId;
+/*            const endpoint = 'cognito-idp.' + Config.region + '.amazonaws.com/' + appConfig.IdentityPoolId;
             Config.credentials = new CognitoIdentityCredentials({
                 IdentityPoolId : appConfig.IdentityPoolId,
                 Logins : {
                     endpoint : result.getIdToken().getJwtToken()
                 }
-            });
+            });*/
 
              // Instantiate aws sdk service objects now that the credentials have been updated.
              // example: var s3 = new AWS.S3();

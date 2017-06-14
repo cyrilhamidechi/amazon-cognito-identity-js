@@ -1,29 +1,52 @@
 <html>
   <body>
-    <div id="signup"></div>
-    <div id="confirmregistration"></div>
-    <div id="resendconfirmation"></div>
-    <div id="signin"></div>
-    <div id="getuserattributes"></div>
-    <div id="verifyuserattribute"></div>
-    <div id="deleteuserattribute"></div>
-    <div id="updateuserattribute"></div>
-    <div id="enablemfa"></div>
-    <div id="disablemfa"></div>
-    <div id="changepwd"></div>
-    <div id="forgotpwd"></div>
-    <div id="deleteuser"></div>
-    <div id="signout"></div>
-    <div id="globalsignout"></div>
-    <div id="getuserfromlocal"></div>
-    <div id="userpoolscognityidentityintegration"></div>
-    <div id="listdevices"></div>
-    <div id="currentdevice"></div>
-    <div id="rememberdevice"></div>
-    <div id="notrememberdevice"></div>
-    <div id="forgetdevice"></div>
-    <div id="signinforcedchangepwd"></div>
-    <div id="getmfaoptions"></div>
+    <div id="menu">
+      <a href="#" onclick="show('raw', 'content');">Raw demo</a> | <a href="#" onclick="show('v1', 'content');">Demo v1</a>
+    </div>
+    <div id="raw" class="content" style="visibility: hidden">
+      <div id="signup"></div>
+      <div id="confirmregistration"></div>
+      <div id="resendconfirmation"></div>
+      <div id="signin"></div>
+      <div id="getuserattributes"></div>
+      <div id="verifyuserattribute"></div>
+      <div id="deleteuserattribute"></div>
+      <div id="updateuserattribute"></div>
+      <div id="enablemfa"></div>
+      <div id="disablemfa"></div>
+      <div id="changepwd"></div>
+      <div id="forgotpwd"></div>
+      <div id="deleteuser"></div>
+      <div id="signout"></div>
+      <div id="globalsignout"></div>
+      <div id="getuserfromlocal"></div>
+      <div id="userpoolscognityidentityintegration"></div>
+      <div id="listdevices"></div>
+      <div id="currentdevice"></div>
+      <div id="rememberdevice"></div>
+      <div id="notrememberdevice"></div>
+      <div id="forgetdevice"></div>
+      <div id="signinforcedchangepwd"></div>
+      <div id="getmfaoptions"></div>
+    </div>
+    <div id="v1" class="content" style="visibility: hidden">
+      <h3>hey</h3>
+    </div>
     <script src="dist/main.bundle.js"></script>
+    <script lang="javascript">
+        function show(id, hide) {
+          console.log('will show "' + id + '" and hide "' + hide + '"');
+          var toShow = document.getElementById(id);
+          if(!toShow) {
+            return false;
+          }
+          var toHide = document.getElementsByClassName(hide);
+          for(var i=0; i<toHide.length; i++) {
+            toHide[i].style.visibility = "hidden";
+          };
+          toShow.style.visibility = "visible";
+          return true;
+        }
+    </script>
   </body>
 </html>

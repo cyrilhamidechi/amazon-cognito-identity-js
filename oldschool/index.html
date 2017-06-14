@@ -25,11 +25,13 @@
 
 
             var cognitoUser = null;
+		var cognitoUserDetails = null;
 
 
             function initContext() {
 
               cognitoUser = null;
+              cognitoUserDetails = null;
               AWS.config.region = COGNITO_CONF.region;
               AWS.config.credentials = new AWS.CognitoIdentityCredentials({
                 IdentityPoolId: COGNITO_CONF.IdentityPoolId
@@ -102,17 +104,24 @@
 
             function getMyDetails() {
 
+		loadMyDetails();
+                for (i = 0; i < cognitoUserDetails.length; i++) {
+                  console.log('attribute ' + cognitoUserDetails[i].getName() + ' has value ' + cognitoUserDetails[i].getValue());
+                }
+
+            }
+
+
+		function loadMyDetails() {
               cognitoUser.getUserAttributes(function (err, result) {
                 if (err) {
                   alert(err);
                   return;
                 }
-                for (i = 0; i < result.length; i++) {
-                  console.log('attribute ' + result[i].getName() + ' has value ' + result[i].getValue());
-                }
+                cognitoUserDetails = result;
               });
 
-            }
+		}
 
 
             function logout() {
@@ -168,12 +177,17 @@
 
 
             function loadS3() {
-              listAlbums();
+		loadMyDetails();
+console.log(cognitoUserDetails);
+              listAlbums(cognitoUserDetails[0].Value);
             }
+
 
             function getHtml(template) {
               return template.join('\n');
             }
+
+
             var UI = {
               showLoggedMenu: function () {
                 UI.hide('logme');
