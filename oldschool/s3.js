@@ -1,4 +1,4 @@
-//from http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/s3-example-photo-album.html
+//Based on http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/s3-example-photo-album.html
 
 
 var S3_CONF = {
@@ -6,208 +6,180 @@ var S3_CONF = {
 };
 
 
-var albumsList = null;
+var userFolder = null;
+var userS3 = null;
 
 
-function initBucket() {
-  albumsList = new AWS.S3({
+function initBucket(folder) {
+  userFolder = folder + '/';
+  userS3 = new AWS.S3({
     apiVersion: '2006-03-01',
-    params: {Bucket: S3_CONF.bucketName}
+    params: {Bucket: S3_CONF.bucketName, Delimiter: '/', Prefix: userFolder}
   });
-document.getElementById('s3content').innerHTML = '';
+  document.getElementById('s3content').innerHTML = '';
 }
 
 
-function listAlbums(folder = '') {
-  initBucket();
-  albumsList.listObjects({Delimiter: '/', Prefix: folder}, function (err, data) {
+function browse(folder) {
+  if (!folder) {
+    folder = userFolder;
+  }
+  folder = decodeURIComponent(folder);
+  userS3.listObjects({Prefix: folder}, function (err, data) {
     if (err) {
-      return alert('There was an error listing your albums: ' + err.message);
+      return alert('There was an error browsing [' + folder + ']: ' + err.message);
     }
     else {
-      var albums = data.CommonPrefixes.map(function (commonPrefix) {
+
+      var folders = data.CommonPrefixes.map(function (commonPrefix) {
         var prefix = commonPrefix.Prefix;
-        var albumName = decodeURIComponent(prefix.replace('/', ''));
+        var folderName = prefix.replace(folder, '');
+        var folderKey = encodeURIComponent(folder + folderName);
         return getHtml([
           '<li>',
-          '<span onclick="deleteAlbum(\'' + albumName + '\')">X</span>',
-          '<span onclick="viewAlbum(\'' + albumName + '\')">',
-          albumName,
-          '</span>',
+          '<span onclick="deleteFolder(\'' + folderKey + '\')">X</span>',
+          '<span onclick="browse(\'' + folderKey + '\')">[' + folderName + ']</span>',
           '</li>'
         ]);
       });
-      var message = albums.length ?
+
+      var files = data.Contents.map(function (file) {
+        var fileKey = file.Key;
+        if (fileKey != folder) {
+          return getHtml([
+            '<li>',
+            '<span onclick="deleteFile(\'' + encodeURIComponent(folder) + "','" + encodeURIComponent(fileKey) + '\')">X</span>[' + fileKey.replace(folder, '') + ']</span>',
+            '</li>'
+          ]);
+        }
+      });
+
+      var foldersMsg = folders.length > 0 ?
         getHtml([
-          '<p>Click on an album name to view it.</p>',
-          '<p>Click on the X to delete the album.</p>'
+          '<p>Click on a folder name to browse it.</p>',
+          '<p>Click on the X to delete a folder.</p>'
         ]) :
-        '<p>You do not have any albums. Please Create album.';
+        '<p>No folders.';
+
+      var filesMsg = files.length > 0 ? '<p>Click on the X to delete a file.</p>' : '<p>No files.';
+
+      var navbar_parts = folder.split('/');
+      var navbar = navbar_parts.map(function (nav, index) {
+        var goto = [];
+        for (var i = 0; i <= index; i++) {
+          goto.push(navbar_parts[i]);
+        }
+        return '<a href="#" onclick="browse(\'' + encodeURIComponent(goto.join('/')) + '/\')">' + nav + '</a>';
+      });
+
       var htmlTemplate = [
-        '<h2>Albums</h2>',
-        message,
+        '<hr />',
+        navbar.join(' / '),
+        '<hr />',
+        '<h3>Folders</h3>',
+        foldersMsg,
         '<ul>',
-        getHtml(albums),
+        getHtml(folders),
         '</ul>',
-        '<button onclick="createAlbum(prompt(\'Enter Album Name:\'))">',
-        'Create New Album',
+        '<hr />',
+        '<h3>Files</h3>',
+        filesMsg,
+        '<ul>',
+        getHtml(files),
+        '</ul>',
+        '<hr />',
+        '<input id="fileupload" type="file">',
+        '<button id="addfile" onclick="addFile(\'' + encodeURIComponent(folder) + '\')">',
+        'Add file',
+        '</button>',
+        '<hr />',
+        '<button onclick="createFolder(prompt(\'Enter folder name:\'), \'' + encodeURIComponent(folder) + '\')">',
+        'Create new folder',
         '</button>'
-      ]
+      ];
+
       document.getElementById('s3content').innerHTML = getHtml(htmlTemplate);
     }
   });
 }
 
 
-function createAlbum(albumName) {
-  albumName = albumName.trim();
-  if (!albumName) {
-    return alert('Album names must contain at least one non-space character.');
+function createFolder(folderName, intoFolder) {
+  folderName = folderName.trim();
+  if (!folderName) {
+    return alert('Folder names must contain at least one non-space character.');
   }
-  if (albumName.indexOf('/') !== -1) {
-    return alert('Album names cannot contain slashes.');
-  }
-  var albumKey = encodeURIComponent(albumName) + '/';
-  albumsList.headObject({Key: albumKey}, function (err, data) {
+  var folderKey = decodeURIComponent(intoFolder) + folderName + '/';
+  userS3.headObject({Key: folderKey}, function (err, data) {
     if (!err) {
-      return alert('Album already exists.');
+      return alert('Folder already exists.');
     }
     if (err.code !== 'NotFound') {
-      return alert('There was an error creating your album: ' + err.message);
+      return alert('There was an error creating your folder: ' + err.message);
     }
-    albumsList.putObject({Key: albumKey}, function (err, data) {
+    userS3.putObject({Key: folderKey}, function (err, data) {
       if (err) {
-        return alert('There was an error creating your album: ' + err.message);
+        return alert('There was an error creating your folder: ' + err.message);
       }
-      alert('Successfully created album.');
-      viewAlbum(albumName);
+      alert('Successfully created folder.');
+      browse(folderKey);
     });
   });
 }
 
 
-function viewAlbum(albumName) {
-  var albumPhotosKey = encodeURIComponent(albumName) + '/';
-  albumsList.listObjects({Prefix: albumPhotosKey}, function (err, data) {
-    if (err) {
-      return alert('There was an error viewing your album: ' + err.message);
-    }
-    // `this` references the AWS.Response instance that represents the response
-    var href = this.request.httpRequest.endpoint.href;
-    var bucketUrl = href + S3_CONF.bucketName + '/';
 
-    var photos = data.Contents.map(function (photo) {
-      if (photo.Key != albumPhotosKey) {
-        var photoKey = photo.Key;
-        var photoUrl = bucketUrl + encodeURIComponent(photoKey);
-        return getHtml([
-          '<span>',
-          '<div>',
-          '<img style="width:128px;height:128px;" src="' + photoUrl + '"/>',
-          '</div>',
-          '<div>',
-          '<span onclick="deletePhoto(\'' + albumName + "','" + photoKey + '\')">',
-          'X',
-          '</span>',
-          '<span>',
-          photoKey.replace(albumPhotosKey, ''),
-          '</span>',
-          '</div>',
-          '<span>',
-        ]);
-      }
-    });
-    var message = photos.length>1 ?
-      '<p>Click on the X to delete the photo</p>' :
-      '<p>You do not have any photos in this album. Please add photos.</p>';
-    var htmlTemplate = [
-      '<h2>',
-      'Album: ' + albumName,
-      '</h2>',
-      message,
-      '<div>',
-      getHtml(photos),
-      '</div>',
-      '<input id="photoupload" type="file" accept="image/*">',
-      '<button id="addphoto" onclick="addPhoto(\'' + albumName + '\')">',
-      'Add Photo',
-      '</button>',
-      '<button onclick="listAlbums()">',
-      'Back To Albums',
-      '</button>',
-    ]
-    document.getElementById('s3content').innerHTML = getHtml(htmlTemplate);
-  });
-}
-
-
-function addPhoto(albumName) {
-  var files = document.getElementById('photoupload').files;
+function addFile(folderName) {
+  var files = document.getElementById('fileupload').files;
   if (!files.length) {
     return alert('Please choose a file to upload first.');
   }
-  var file = files[0];
-  var fileName = file.name;
-  var albumPhotosKey = encodeURIComponent(albumName) + '/';
 
-  var photoKey = albumPhotosKey + fileName;
-  albumsList.upload({
-    Key: photoKey,
+  var file = files[0];
+
+  var fileKey = decodeURIComponent(folderName) + file.name;
+  userS3.upload({
+    Key: fileKey,
     Body: file
   }, function (err, data) {
     if (err) {
-      return alert('There was an error uploading your photo: ', err.message);
+      return alert('There was an error uploading your file: ', err.message);
     }
-    alert('Successfully uploaded photo.');
-    viewAlbum(albumName);
+    alert('Successfully uploaded file.');
+    browse(folderName);
   });
 }
 
 
-function deletePhoto(albumName, photoKey) {
-  albumsList.deleteObject({Key: photoKey}, function (err, data) {
+function deleteFile(folderName, fileKey) {
+  userS3.deleteObject({Key: decodeURIComponent(fileKey)}, function (err, data) {
     if (err) {
-      return alert('There was an error deleting your photo: ', err.message);
+      return alert('There was an error deleting your file: ', err.message);
     }
-    alert('Successfully deleted photo.');
-    viewAlbum(albumName);
+    alert('Successfully deleted file.');
+    browse(folderName);
   });
 }
 
 
-function deleteAlbum(albumName) {
-  var albumKey = encodeURIComponent(albumName) + '/';
-  albumsList.listObjects({Prefix: albumKey}, function (err, data) {
+function deleteFolder(folderName) {
+  folderName = decodeURIComponent(folderName)
+  userS3.listObjects({Prefix: folderName}, function (err, data) {
     if (err) {
-      return alert('There was an error deleting your album: ', err.message);
+      return alert('There was an error deleting your folder: ', err.message);
     }
     var objects = data.Contents.map(function (object) {
       return {Key: object.Key};
     });
-    albumsList.deleteObjects({
+    userS3.deleteObjects({
       Delete: {Objects: objects, Quiet: true}
     }, function (err, data) {
       if (err) {
-        return alert('There was an error deleting your album: ', err.message);
+        return alert('There was an error deleting your folder: ', err.message);
       }
-      alert('Successfully deleted album.');
-      listAlbums();
-    });
-  });
-}
-
-
-function basicDemo() {
-  albumsList.listObjects({Delimiter: '/'}, function (err, data) {
-    if (err) {
-      console.log('There was an error listing your albums: ' + err.message);
-      return;
-    }
-    console.log(data);
-    data.CommonPrefixes.map(function (commonPrefix) {
-      var prefix = commonPrefix.Prefix;
-      var albumName = decodeURIComponent(prefix.replace('/', ''));
-      console.log(albumName);
+      alert('Successfully deleted folder.');
+      var folders = folderName.split('/');
+      browse(folderName.replace(folders[folders.length - 2] + '/', ''));
     });
   });
 }

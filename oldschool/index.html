@@ -25,7 +25,7 @@
 
 
             var cognitoUser = null;
-		var cognitoUserDetails = null;
+            var cognitoUserDetails = null;
 
 
             function initContext() {
@@ -36,6 +36,7 @@
               AWS.config.credentials = new AWS.CognitoIdentityCredentials({
                 IdentityPoolId: COGNITO_CONF.IdentityPoolId
               });
+              document.getElementById('s3content').innerHTML = '';
 
             }
 
@@ -104,24 +105,33 @@
 
             function getMyDetails() {
 
-		loadMyDetails();
+              loadMyDetails(function () {
                 for (i = 0; i < cognitoUserDetails.length; i++) {
                   console.log('attribute ' + cognitoUserDetails[i].getName() + ' has value ' + cognitoUserDetails[i].getValue());
                 }
-
+              });
             }
 
 
-		function loadMyDetails() {
+            function loadMyDetails(callback) {
+
               cognitoUser.getUserAttributes(function (err, result) {
+
                 if (err) {
+                  UI.hideLoggedMenu();
                   alert(err);
                   return;
                 }
+
                 cognitoUserDetails = result;
+
+                if (callback) {
+                  callback();
+                }
+
               });
 
-		}
+            }
 
 
             function logout() {
@@ -177,9 +187,11 @@
 
 
             function loadS3() {
-		loadMyDetails();
-console.log(cognitoUserDetails);
-              listAlbums(cognitoUserDetails[0].Value);
+              loadMyDetails(function () {
+                initBucket(cognitoUserDetails[0].Value);
+//                initBucket(AWS.config.credentials.identityId);
+                browse();
+              });
             }
 
 
