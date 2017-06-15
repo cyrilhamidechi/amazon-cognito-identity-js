@@ -1,0 +1,23 @@
+<html>
+    <body>
+        <script id="facebook-jssdk" src="./lib/fb-sdk.js"></script>
+        <script>
+            window.fbAsyncInit = function () {
+              FB.init({
+                appId: '1218325048293827',
+                autoLogAppEvents: true,
+                xfbml: true,
+                version: 'v2.9'
+              });
+              FB.AppEvents.logPageView();
+            };
+        </script>
+        <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"></div>
+        <div
+            class="fb-like"
+            data-share="true"
+            data-width="450"
+            data-show-faces="true">
+        </div>
+    </body>
+</html>
