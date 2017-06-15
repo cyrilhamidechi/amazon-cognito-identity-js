@@ -188,8 +188,7 @@
 
             function loadS3() {
               loadMyDetails(function () {
-                initBucket(cognitoUserDetails[0].Value);
-//                initBucket(AWS.config.credentials.identityId);
+                initBucket(AWS.config.credentials.identityId);
                 browse();
               });
             }
