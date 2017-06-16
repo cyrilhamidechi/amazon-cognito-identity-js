@@ -527,7 +527,7 @@ Note for myself:
  - [-] demo feature request payers (http://docs.aws.amazon.com/AmazonS3/latest/dev/RequesterPaysBuckets.html)
 - [.] use various Authentication Providers (http://docs.aws.amazon.com/cognito/latest/developerguide/external-identity-providers.html)
  - [.] Facebook
- - [ ] Google+
+ - [.] Google+
  - [ ] Twitter
  - [ ] OpenID
 - [ ] use Cognito to access to some other AWS services
