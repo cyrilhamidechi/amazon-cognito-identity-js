@@ -8,16 +8,18 @@ var S3_CONF = {
 
 var userFolder = null;
 var userS3 = null;
+var userHtmlContainer = null;
 
 
-function initBucket(folder) {
+function initBucket(folder, container) {
+  userHtmlContainer = container;
   userFolder = folder + '/';
   userS3 = new AWS.S3({
     apiVersion: '2006-03-01',
     params: {Bucket: S3_CONF.bucketName, Delimiter: '/', Prefix: userFolder}
   });
-  document.getElementById('s3content').innerHTML = '';
 }
+
 
 
 function browse(folder) {
@@ -35,31 +37,19 @@ function browse(folder) {
         var prefix = commonPrefix.Prefix;
         var folderName = prefix.replace(folder, '');
         var folderKey = encodeURIComponent(folder + folderName);
-        return getHtml([
-          '<li>',
-          '<span onclick="deleteFolder(\'' + folderKey + '\')">X</span>',
-          '<span onclick="browse(\'' + folderKey + '\')">[' + folderName + ']</span>',
-          '</li>'
-        ]);
+        return '<li><span onclick="deleteFolder(\'' + folderKey + '\')">X</span><span onclick="browse(\'' + folderKey + '\')">[' + folderName + ']</span></li>';
       });
 
       var files = data.Contents.map(function (file) {
         var fileKey = file.Key;
         if (fileKey != folder) {
-          return getHtml([
-            '<li>',
-            '<span onclick="deleteFile(\'' + encodeURIComponent(folder) + "','" + encodeURIComponent(fileKey) + '\')">X</span>[' + fileKey.replace(folder, '') + ']</span>',
-            '</li>'
-          ]);
+          return '<li><span onclick="deleteFile(\'' + encodeURIComponent(folder) + "','" + encodeURIComponent(fileKey) + '\')">X</span>[' + fileKey.replace(folder, '') + ']</span></li>';
         }
       });
 
-      var foldersMsg = folders.length > 0 ?
-        getHtml([
-          '<p>Click on a folder name to browse it.</p>',
-          '<p>Click on the X to delete a folder.</p>'
-        ]) :
-        '<p>No folders.';
+      var foldersMsg = folders.length > 0
+        ? '<p>Click on a folder name to browse it.</p><p>Click on the X to delete a folder.</p>'
+        : '<p>No folders.';
 
       var filesMsg = files.length > 0 ? '<p>Click on the X to delete a file.</p>' : '<p>No files.';
 
@@ -72,33 +62,18 @@ function browse(folder) {
         return '<a href="#" onclick="browse(\'' + encodeURIComponent(goto.join('/')) + '/\')">' + nav + '</a>';
       });
 
-      var htmlTemplate = [
-        '<hr />',
-        navbar.join(' / '),
-        '<hr />',
-        '<h3>Folders</h3>',
+      userHtmlContainer.fill([
+        '<hr />' + navbar.join(' / '),
+        '<hr /><h3>Folders</h3>',
         foldersMsg,
-        '<ul>',
-        getHtml(folders),
-        '</ul>',
-        '<hr />',
-        '<h3>Files</h3>',
+        '<ul>' + folders.join('') + '</ul>',
+        '<hr /><h3>Files</h3>',
         filesMsg,
-        '<ul>',
-        getHtml(files),
-        '</ul>',
-        '<hr />',
-        '<input id="fileupload" type="file">',
-        '<button id="addfile" onclick="addFile(\'' + encodeURIComponent(folder) + '\')">',
-        'Add file',
-        '</button>',
-        '<hr />',
-        '<button onclick="createFolder(prompt(\'Enter folder name:\'), \'' + encodeURIComponent(folder) + '\')">',
-        'Create new folder',
-        '</button>'
-      ];
-
-      document.getElementById('s3content').innerHTML = getHtml(htmlTemplate);
+        '<ul>' + files.join('') + '</ul>',
+        '<hr /><input id="fileupload" type="file">',
+        '<button id="addfile" onclick="addFile(\'' + encodeURIComponent(folder) + '\')">Add file</button>',
+        '<hr /><button onclick="createFolder(prompt(\'Enter folder name:\'), \'' + encodeURIComponent(folder) + '\')">Create new folder</button>'
+      ]);
     }
   });
 }

@@ -1,14 +1,19 @@
 <html>
     <body onload="initContext(); loadSession();">
-        <div id="logme">
-            <input type="text" id="login" placeholder="Login" /> | <input type="password" id="pwd" placeholder="Password" /> | <a href="#" onclick="signIn();">Sign in</a>
+        <div id="curtain" style="display:none;">
+            <div id="logme">
+                <input type="text" id="login" placeholder="Login" /> | <input type="password" id="pwd" placeholder="Password" /> | <span id="signin"><a href="#" onclick="signIn();">Sign in</a></span>
+            </div>
+            <div><a id="loadsession" href="#" onclick="loadSession();">load session</a> | <a id="islogged" href="#" onclick="isLogged();">is logged</a> | <a id="displayS3" href="#" onclick="UI.displayS3();">S3</a> | <a id="displaySync" href="#" onclick="UI.displaySync();">view sync</a> | <a id="mydetails" href="#" onclick="getMyDetails();">my details</a> | <a id="logout" href="#" onclick="logout();">logout</a></div>
+            <div id="s3">
+                <h3>My S3 bucket</h3>
+                <div id="s3content"></div>
+            </div>
+            <div id="sync">
+                <h3>Sync</h3>
+                <div id="syncContent"></div>
+            </div>
         </div>
-        <div id="s3">
-            <h3>My S3 bucket</h3>
-            <a href="#" onclick="loadS3();">load my bucket</a>
-            <div id="s3content"></div>
-        </div>
-        <div><a id="loadsession" href="#" onclick="loadSession();">load session</a> | <a id="islogged" href="#" onclick="isLogged();">is logged</a> | <a id="mydetails" href="#" onclick="getMyDetails();">my details</a> | <a id="logout" href="#" onclick="logout();">logout</a></div>
         <script src="./lib/aws-cognito-sdk.min.js"></script>
         <script src="./lib/amazon-cognito-identity.min.js"></script>
         <script src="./lib/aws-sdk.min.js"></script>
@@ -17,216 +22,273 @@
         <script src="./../noversion/hardcoded.js"></script>
         <script>
 
-            var COGNITO_CONF = {
-              region: 'eu-west-1',
-              IdentityPoolId: 'eu-west-1:09cfb9bc-86cf-4aa2-8c0b-dc69614e9527',
-              UserPoolId: 'eu-west-1_9JBYfxf8r',
-              ClientId: '7328r336bblcg28s42hau13u6c'
-            };
+                var COGNITO_CONF = {
+                  region: 'eu-west-1',
+                  IdentityPoolId: 'eu-west-1:09cfb9bc-86cf-4aa2-8c0b-dc69614e9527',
+                  UserPoolId: 'eu-west-1_9JBYfxf8r',
+                  ClientId: '7328r336bblcg28s42hau13u6c'
+                };
 
 
-            var cognitoUser = null;
-            var cognitoUserDetails = null;
+                var cognitoUser = null;
+                var cognitoUserDetails = null;
 
 
-            function initContext() {
+                function initContext() {
 
-              cognitoUser = null;
-              cognitoUserDetails = null;
-              AWS.config.region = COGNITO_CONF.region;
-              AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-                IdentityPoolId: COGNITO_CONF.IdentityPoolId
-              });
-              document.getElementById('s3content').innerHTML = '';
-
-            }
-
-
-            function loadSession() {
-
-              UI.hide('loadsession');
-
-              var userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool({
-                UserPoolId: COGNITO_CONF.UserPoolId,
-                ClientId: COGNITO_CONF.ClientId
-              });
-              cognitoUser = userPool.getCurrentUser();
-
-              if (!cognitoUser) {
-                showLoginForm();
-                return;
-              }
-
-              cognitoUser.getSession(function (err, session) {
-                if (err) {
-                  alert(err);
-                  return;
+                  cognitoUser = null;
+                  cognitoUserDetails = null;
+                  AWS.config.region = COGNITO_CONF.region;
+                  AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                    IdentityPoolId: COGNITO_CONF.IdentityPoolId
+                  });
+                  UI.hide('s3');
+                  HtmlContainer.init('s3content');
+                  UI.hide('sync');
+                  HtmlContainer.init('syncContent');
                 }
 
-                setCreds(session.idToken.jwtToken);
 
-              });
+                function loadSession() {
 
-            }
+                  UI.hide('loadsession');
+
+                  var userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool({
+                    UserPoolId: COGNITO_CONF.UserPoolId,
+                    ClientId: COGNITO_CONF.ClientId
+                  });
+                  cognitoUser = userPool.getCurrentUser();
+
+                  if (!cognitoUser) {
+                    showLoginForm();
+                    UI.show('curtain');
+                  }
+                    else {
+                    cognitoUser.getSession(function (err, session) {
+                      if (err) {
+                        alert(err);
+                        return;
+                      }
+
+                      setCreds(session.idToken.jwtToken);
+
+                    });
+                  }
 
 
-            function showLoginForm() {
-
-              document.getElementById('login').value = USER_CREDS.login;
-              document.getElementById('pwd').value = USER_CREDS.pwd;
-              UI.hideLoggedMenu();
-
-            }
-
-
-            function signIn() {
-
-              cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser({
-                Username: USER_CREDS.login,
-                Pool: new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool({
-                  UserPoolId: COGNITO_CONF.UserPoolId,
-                  ClientId: COGNITO_CONF.ClientId
-                })
-              });
-
-              cognitoUser.authenticateUser(new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails({
-                Username: document.getElementById('login').value,
-                Password: document.getElementById('pwd').value
-              }), {
-                onSuccess: function (result) {
-                  setCreds(result.getIdToken().getJwtToken());
-                },
-                onFailure: function (err) {
-                  alert("Error:" + err);
                 }
-              });
-
-            }
 
 
-            function getMyDetails() {
+                function showLoginForm() {
 
-              loadMyDetails(function () {
-                for (i = 0; i < cognitoUserDetails.length; i++) {
-                  console.log('attribute ' + cognitoUserDetails[i].getName() + ' has value ' + cognitoUserDetails[i].getValue());
-                }
-              });
-            }
-
-
-            function loadMyDetails(callback) {
-
-              cognitoUser.getUserAttributes(function (err, result) {
-
-                if (err) {
+                  document.getElementById('login').value = USER_CREDS.login;
+                  document.getElementById('pwd').value = USER_CREDS.pwd;
                   UI.hideLoggedMenu();
-                  alert(err);
-                  return;
+
                 }
 
-                cognitoUserDetails = result;
 
-                if (callback) {
-                  callback();
+                function signIn() {
+
+                  var login = document.getElementById('login').value.trim();
+                  var pwd = document.getElementById('pwd').value.trim();
+                  if (login.length < 8 || pwd.length < 6) {
+                    return;
+                  }
+
+                  UI.replaceAttr('signin', 'innerHTML', 'loading...');
+
+                  cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser({
+                    Username: USER_CREDS.login,
+                    Pool: new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool({
+                      UserPoolId: COGNITO_CONF.UserPoolId,
+                      ClientId: COGNITO_CONF.ClientId
+                    })
+                  });
+
+                  cognitoUser.authenticateUser(new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails({
+                    Username: login,
+                    Password: pwd
+                  }), {
+                    onSuccess: function (result) {
+                      setCreds(result.getIdToken().getJwtToken());
+                    },
+                    onFailure: function (err) {
+                      alert("Error:" + err);
+                    }
+                  });
+
                 }
 
-              });
 
-            }
+                function getMyDetails() {
 
-
-            function logout() {
-
-              UI.hide('logout');
-
-              if (cognitoUser) {
-                cognitoUser.signOut();
-              }
-
-              initContext();
-              isLogged();
-
-            }
-
-
-            function setCreds(jwtToken) {
-
-              var logins = {}
-              logins['cognito-idp.' + COGNITO_CONF.region + '.amazonaws.com/' + COGNITO_CONF.UserPoolId] = jwtToken;
-
-              AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-                IdentityPoolId: COGNITO_CONF.IdentityPoolId,
-                Logins: logins
-              });
-
-              isLogged();
-
-            }
-
-
-            function isLogged() {
-
-              if (!AWS.config.credentials || !cognitoUser) {
-                alert('Not logged');
-                UI.hideLoggedMenu();
-                return;
-              }
-
-              AWS.config.credentials.refresh(function (err, result) {
-                console.log(err);
-                if (err) {
-                  UI.hideLoggedMenu();
-                  alert(err);
-                  return;
+                  loadMyDetails(function () {
+                    for (i = 0; i < cognitoUserDetails.length; i++) {
+                      console.log('attribute ' + cognitoUserDetails[i].getName() + ' has value ' + cognitoUserDetails[i].getValue());
+                    }
+                  });
                 }
-                console.log(result);
-                console.log('creds ok');
-                UI.showLoggedMenu();
-              });
-
-            }
 
 
-            function loadS3() {
-              loadMyDetails(function () {
-                initBucket(AWS.config.credentials.identityId);
-                browse();
-              });
-            }
+                function loadMyDetails(callback) {
+
+                  cognitoUser.getUserAttributes(function (err, result) {
+
+                    if (err) {
+                      UI.hideLoggedMenu();
+                      alert(err);
+                      return;
+                    }
+
+                    cognitoUserDetails = result;
+
+                    if (callback) {
+                      callback();
+                    }
+
+                  });
+
+                }
 
 
-            function getHtml(template) {
-              return template.join('\n');
-            }
+                function logout() {
+
+                  UI.hide('logout');
+
+                  if (cognitoUser) {
+                    cognitoUser.signOut();
+                  }
+
+                  initContext();
+                  isLogged();
+
+                }
 
 
-            var UI = {
-              showLoggedMenu: function () {
-                UI.hide('logme');
-                UI.hide('loadsession');
-                UI.show('s3');
-                UI.show('mydetails');
-                UI.show('logout');
-              },
-              hideLoggedMenu: function () {
-                UI.show('logme');
-                UI.show('loadsession');
-                UI.hide('s3');
-                UI.hide('mydetails');
-                UI.hide('logout');
-              },
-              show: function (id) {
-                UI.toggleDisplay(id, 'inline');
-              },
-              hide: function (id) {
-                UI.toggleDisplay(id, 'none');
-              },
-              toggleDisplay: function (id, display) {
-                document.getElementById(id).style.display = display;
-              }
+                function setCreds(jwtToken) {
 
-            }
+                  var logins = {};
+                  logins['cognito-idp.' + COGNITO_CONF.region + '.amazonaws.com/' + COGNITO_CONF.UserPoolId] = jwtToken;
 
+                  AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                    IdentityPoolId: COGNITO_CONF.IdentityPoolId,
+                    Logins: logins
+                  });
+
+                  isLogged();
+
+                }
+
+
+                function isLogged() {
+
+                  if (!AWS.config.credentials || !cognitoUser) {
+                    console.log('nope');
+                    UI.hideLoggedMenu();
+                    return;
+                  }
+
+                  AWS.config.credentials.refresh(function (err, result) {
+                    console.log(err);
+                    if (err) {
+                      UI.hideLoggedMenu();
+                      alert(err);
+                      return;
+                    }
+                    console.log(result);
+                    console.log('creds ok');
+                    UI.showLoggedMenu();
+                  });
+
+                }
+
+
+                var UI = {
+                  displayS3: function () {
+                    UI.hide('sync');
+                    UI.show('s3');
+                    loadMyDetails(function () {
+                      initBucket(AWS.config.credentials.identityId, HtmlContainer.init('s3content'));
+                      browse();
+                    });
+                  },
+                  displaySync: function () {
+                    UI.show('sync');
+                    UI.hide('s3');
+                    loadMyDetails(function () {
+                      // load sync data
+                    });
+                  },
+                  showLoggedMenu: function () {
+                    UI.hide('logme');
+                    UI.hide('loadsession');
+                    UI.show('displayS3');
+                    UI.show('displaySync');
+                    UI.show('mydetails');
+                    UI.show('logout');
+                    UI.restoreAttr('signin', 'innerHTML');
+                    UI.show('curtain');
+                  },
+                  hideLoggedMenu: function () {
+                    UI.show('logme');
+                    UI.show('loadsession');
+                    UI.hide('displayS3');
+                    UI.hide('displaySync');
+                    UI.hide('s3');
+                    UI.hide('sync');
+                    UI.hide('mydetails');
+                    UI.hide('logout');
+                  },
+                  show: function (id) {
+                    UI.toggleDisplay(id, 'inline');
+                  },
+                  hide: function (id) {
+                    UI.toggleDisplay(id, 'none');
+                  },
+                  toggleDisplay: function (id, display) {
+                    document.getElementById(id).style.display = display;
+                  },
+                  replaceAttr: function (id, attribute, newvalue) {
+                    UI.setAttr(id, attribute + '-backup', UI.getAttr(id, attribute));
+                    UI.setAttr(id, attribute, newvalue);
+                  },
+                  restoreAttr: function (id, attribute) {
+                    var elmt = document.getElementById(id);
+                    UI.setAttr(id, attribute, elmt.getAttribute(attribute + '-backup'));
+                  },
+                  getAttr: function (id, attribute, value) {
+                    var elmt = document.getElementById(id);
+                    return 'innerHTML' == attribute ? elmt.innerHTML : elmt.getAttribute(attribute);
+                  },
+                  setAttr: function (id, attribute, value) {
+                    var elmt = document.getElementById(id);
+                    if ('innerHTML' == attribute) {
+                      elmt.innerHTML = value;
+                    }
+                    else {
+                      elmt.setAttribute(attribute, value);
+                    }
+                  }
+                }
+
+                var HtmlContainer = {
+                  container: null,
+                  init: function (id, filler) {
+                    HtmlContainer.container = document.getElementById(id);
+                    HtmlContainer.empty(filler);
+                    return HtmlContainer;
+                  },
+                  empty: function (filler) {
+                    HtmlContainer.fill(filler ? filler : 'Loading...');
+                  },
+                  fill: function (content) {
+                    if (Array.isArray(content)) {
+                      content = content.join('\n');
+                    }
+                    HtmlContainer.container.innerHTML = content;
+                  }
+                }
 
         </script>
     </body>
