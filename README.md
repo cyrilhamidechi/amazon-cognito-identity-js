@@ -526,12 +526,22 @@ Note for myself:
  - [x] allow one S3 root dir per Cognito user (https://aws.amazon.com/blogs/mobile/understanding-amazon-cognito-authentication-part-3-roles-and-policies/)
  - [-] demo feature request payers (http://docs.aws.amazon.com/AmazonS3/latest/dev/RequesterPaysBuckets.html)
 - [.] use various Authentication Providers (http://docs.aws.amazon.com/cognito/latest/developerguide/external-identity-providers.html)
- - [.] Facebook
- - [.] Google+
- - [ ] Twitter
+ - [.] Facebook (WIP)
+ - [.] Google+ (WIP)
+ - [x] Twitter (later, once market will be stabilized, https://firebase.googleblog.com/2017/01/FabricJoinsGoogle17.html, http://get.digits.com/blog/introducing-firebase-phone-authentication)
  - [ ] OpenID
-- [ ] use Cognito to access to some other AWS services
+- [ ] use Cognito to access to various AWS services (http://docs.aws.amazon.com/cognito/latest/developerguide/iam-roles.html)
  - [ ] Aurora
  - [ ] DynamoDB
  - [ ] ElasticSearch
-
+ - [ ] Lambda
+ - [ ] SES
+ - [ ] SNS
+ - [ ] SQS
+ - [ ] Lex
+ - [ ] Machine Learning
+ - [ ] Polly
+ - [ ] Rekognition
+ - [ ] Kinesis Firehose
+ - [ ] Kinesis Streams
+ - [ ] IoT
