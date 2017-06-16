@@ -7,6 +7,7 @@ var Cognito = {
   },
   user: null,
   userDetails: null,
+  htmlContainer: null,
   initContext: function () {
 
     Cognito.user = null;
@@ -19,6 +20,8 @@ var Cognito = {
     HtmlContainer.init('s3content');
     UI.hide('sync');
     HtmlContainer.init('syncContent');
+    UI.hide('cog');
+    Cognito.htmlContainer = HtmlContainer.init('cogcontent');
   },
   loadSession: function () {
 
@@ -82,9 +85,13 @@ var Cognito = {
   getMyDetails: function () {
 
     Cognito.loadMyDetails(function () {
+      var details = [];
+      details.push('<ul>');
       for (i = 0; i < Cognito.userDetails.length; i++) {
-        console.log('attribute ' + Cognito.userDetails[i].getName() + ' has value ' + Cognito.userDetails[i].getValue());
+        details.push('<li>' + Cognito.userDetails[i].getName() + ' => ' + Cognito.userDetails[i].getValue() + '</li>');
       }
+      details.push('</ul>');
+      Cognito.htmlContainer.fill(details);
     });
   },
   loadMyDetails: function (callback) {
@@ -134,7 +141,6 @@ var Cognito = {
   isLogged: function () {
 
     if (!AWS.config.credentials || !Cognito.user) {
-      console.log('nope');
       UI.hideLoggedMenu();
       return;
     }
@@ -146,8 +152,6 @@ var Cognito = {
         alert(err);
         return;
       }
-      console.log(result);
-      console.log('creds ok');
       UI.showLoggedMenu();
     });
 

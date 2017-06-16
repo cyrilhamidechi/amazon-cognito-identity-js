@@ -1,6 +1,7 @@
 var UI = {
   displayS3: function () {
     UI.hide('sync');
+    UI.hide('cog');
     UI.show('s3');
     Cognito.loadMyDetails(function () {
       S3.init(AWS.config.credentials.identityId, HtmlContainer.init('s3content'));
@@ -10,9 +11,16 @@ var UI = {
   displaySync: function () {
     UI.show('sync');
     UI.hide('s3');
+    UI.hide('cog');
     Cognito.loadMyDetails(function () {
       // load sync data
     });
+  },
+  displayCog: function () {
+    Cognito.getMyDetails();
+    UI.hide('sync');
+    UI.hide('s3');
+    UI.show('cog');
   },
   showLoggedMenu: function () {
     UI.hide('logme');
@@ -21,6 +29,7 @@ var UI = {
     UI.show('displaySync');
     UI.show('mydetails');
     UI.show('logout');
+    UI.displayCog();
     UI.show('curtain');
   },
   hideLoggedMenu: function () {

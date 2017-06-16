@@ -4,7 +4,11 @@
             <div id="logme">
                 <input type="text" id="login" placeholder="Login" /> | <input type="password" id="pwd" placeholder="Password" /> | <a id="signin" href="#" onclick="Cognito.signIn();">Sign in</a> | <span id="signin-inprogress" style="display:none;">In progress...</span>
             </div>
-            <div><a id="loadsession" href="#" onclick="Cognito.loadSession();">load session</a> | <a id="islogged" href="#" onclick="Cognito.isLogged();">is logged</a> | <a id="displayS3" href="#" onclick="UI.displayS3();">S3</a> | <a id="displaySync" href="#" onclick="UI.displaySync();">view sync</a> | <a id="mydetails" href="#" onclick="Cognito.getMyDetails();">my details</a> | <a id="logout" href="#" onclick="Cognito.logout();">logout</a></div>
+            <div><a id="loadsession" href="#" onclick="Cognito.loadSession();">load session</a> | <a id="displayS3" href="#" onclick="UI.displayS3();">S3</a> | <a id="displaySync" href="#" onclick="UI.displaySync();">view sync</a> | <a id="mydetails" href="#" onclick="UI.displayCog();">my details</a> | <a id="logout" href="#" onclick="Cognito.logout();">logout</a></div>
+            <div id="cog">
+                <h3>Some details</h3>
+                <div id="cogcontent"></div>
+            </div>
             <div id="s3">
                 <h3>My S3 bucket</h3>
                 <div id="s3content"></div>
