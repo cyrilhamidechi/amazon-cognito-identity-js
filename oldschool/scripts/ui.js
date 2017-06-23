@@ -13,7 +13,8 @@ var UI = {
     UI.hide('s3');
     UI.hide('cog');
     Cognito.loadMyDetails(function () {
-      // load sync data
+      CognitoSync.init(AWS.config.credentials, HtmlContainer.init('syncContent'));
+      CognitoSync.listDatasets();
     });
   },
   displayCog: function () {
