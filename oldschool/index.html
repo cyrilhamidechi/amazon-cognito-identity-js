@@ -2,9 +2,18 @@
     <body onload="Cognito.initContext(); Cognito.loadSession();">
         <div id="curtain" style="display:none;">
             <div id="logme">
-                <input type="text" id="login" placeholder="Login" /> | <input type="password" id="pwd" placeholder="Password" /> | <a id="signin" href="#" onclick="Cognito.signIn();">Sign in</a> | <span id="signin-inprogress" style="display:none;">In progress...</span>
+                <input type="text" id="login" placeholder="Login" /> |
+                <input type="password" id="pwd" placeholder="Password" /> |
+                <a id="signin" href="#" onclick="Cognito.signIn();">Sign in</a> |
+                <span id="signin-inprogress" style="display:none;">In progress...</span>
             </div>
-            <div><a id="loadsession" href="#" onclick="Cognito.loadSession();">load session</a> | <a id="displayS3" href="#" onclick="UI.displayS3();">S3</a> | <a id="displaySync" href="#" onclick="UI.displaySync();">view sync</a> | <a id="mydetails" href="#" onclick="UI.displayCog();">my details</a> | <a id="logout" href="#" onclick="Cognito.logout();">logout</a></div>
+            <div>
+                <a id="loadsession" href="#" onclick="Cognito.loadSession();">load session</a> |
+                <a id="displayS3" href="#" onclick="UI.displayS3();">S3</a> |
+                <a id="displaySync" href="#" onclick="UI.displaySync();">view sync</a> |
+                <a id="mydetails" href="#" onclick="UI.displayCog();">my details</a> |
+                <a id="logout" href="#" onclick="Cognito.logout();">logout</a>
+            </div>
             <div id="cog">
                 <h3>Some details</h3>
                 <div id="cogcontent"></div>
@@ -18,13 +27,14 @@
                 <div id="syncContent"></div>
             </div>
         </div>
-        <script src="./lib/aws-cognito-sdk.min.js"></script>
-        <script src="./lib/amazon-cognito-identity.min.js"></script>
         <script src="./lib/aws-sdk.min.js"></script>
+        <script src="./lib/aws-cognito-sdk.min.js"></script>
+        <script src="./lib/amazon-cognito.min.js"></script>
+        <script src="./lib/amazon-cognito-identity.min.js"></script>
         <script src="./lib/fb-sdk.js"></script>
+        <script src="./scripts/html.js"></script>
         <script src="./scripts/s3.js"></script>
         <script src="./scripts/ui.js"></script>
-        <script src="./scripts/html.js"></script>
         <script src="./scripts/cognito.js"></script>
         <script src="./scripts/cognito-sync.js"></script>
         <script src="./../noversion/hardcoded.js"></script>

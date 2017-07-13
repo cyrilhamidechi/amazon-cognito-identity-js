@@ -52,8 +52,8 @@ var Cognito = {
   },
   signIn: function () {
 
-    var login = document.getElementById('login').value.trim();
-    var pwd = document.getElementById('pwd').value.trim();
+    var login = $('login').value.trim();
+    var pwd = $('pwd').value.trim();
     if (login.length < 8 || pwd.length < 6) {
       return;
     }

@@ -92,7 +92,7 @@ var S3 = {
     });
   },
   addFile: function (folderName) {
-    var files = document.getElementById('fileupload').files;
+    var files = $('fileupload').files;
     if (!files.length) {
       return alert('Please choose a file to upload first.');
     }

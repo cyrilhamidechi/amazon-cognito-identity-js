@@ -12,9 +12,30 @@ var UI = {
     UI.show('sync');
     UI.hide('s3');
     UI.hide('cog');
+//    AWS.config.credentials.get(function () {
+//      var syncManager = new AWS.CognitoSyncManager();
+//      syncManager.openOrCreateDataset('myDatasetName', function (err, dataset) {
+//        dataset.get('myKey', function (err, value) {
+//          console.log('myRecord: ' + value);
+//        });
+//
+//        dataset.put('newKey', 'newValue', function (err, record) {
+//          console.log(record);
+//        });
+//
+//        dataset.remove('oldKey', function (err, success) {
+//          console.log(success);
+//        });
+//      });
+//    });
+//    AWS.config.credentials.get(function () {
+//      CognitoSync.init(HtmlContainer.init('syncContent'));
+//      CognitoSync.listDatasets();
+//    });
     Cognito.loadMyDetails(function () {
-      CognitoSync.init(AWS.config.credentials, HtmlContainer.init('syncContent'));
+      CognitoSync.init(AWS.config.credentials.identityId, Cognito.CONF.IdentityPoolId, HtmlContainer.init('syncContent'));
       CognitoSync.listDatasets();
+//      CognitoSync.datasetHandler('myDatasetName');
     });
   },
   displayCog: function () {
@@ -46,8 +67,8 @@ var UI = {
     UI.hide('logout');
   },
   showLoginForm: function () {
-    document.getElementById('login').value = USER_CREDS.login;
-    document.getElementById('pwd').value = USER_CREDS.pwd;
+    $('login').value = USER_CREDS.login;
+    $('pwd').value = USER_CREDS.pwd;
     UI.hideLoggedMenu();
   },
   show: function (id) {
@@ -57,7 +78,7 @@ var UI = {
     UI.toggleDisplay(id, 'none');
   },
   toggleDisplay: function (id, display) {
-    document.getElementById(id).style.display = display;
+    $(id).style.display = display;
   }
 }
 

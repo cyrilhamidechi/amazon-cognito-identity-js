@@ -1,7 +1,7 @@
 var HtmlContainer = {
   container: null,
   init: function (id, filler) {
-    HtmlContainer.container = document.getElementById(id);
+    HtmlContainer.container = $(id);
     HtmlContainer.empty(filler);
     return HtmlContainer;
   },
@@ -13,6 +13,18 @@ var HtmlContainer = {
       content = content.join('\n');
     }
     HtmlContainer.container.innerHTML = content;
+  },
+  displayDetails: function(object) {
+    var details = [];
+    for(var prop in object) {
+      details.push('<li>' + prop + ' => ' + object[prop] + '</li>');
+    }
+    return '<small><ul>' + details.join('\n') + '</ul></small>';
   }
+  //todo: buffer + flush
+}
+
+function $(id) {
+  return document.getElementById(id);
 }
 
