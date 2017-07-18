@@ -33,9 +33,8 @@ var UI = {
 //      CognitoSync.listDatasets();
 //    });
     Cognito.loadMyDetails(function () {
-      CognitoSync.init(AWS.config.credentials.identityId, Cognito.CONF.IdentityPoolId, HtmlContainer.init('syncContent'));
-      CognitoSync.listDatasets();
-//      CognitoSync.datasetHandler('myDatasetName');
+      CognitoSync.init(HtmlContainer.init('syncContent'));
+      CognitoSync.listDatasets($('datasets-name').value.split(','));
     });
   },
   displayCog: function () {

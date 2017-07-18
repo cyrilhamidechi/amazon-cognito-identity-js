@@ -14,10 +14,12 @@ var HtmlContainer = {
     }
     HtmlContainer.container.innerHTML = content;
   },
-  displayDetails: function(object) {
+  displayDetails: function(object, all) {
     var details = [];
     for(var prop in object) {
-      details.push('<li>' + prop + ' => ' + object[prop] + '</li>');
+      if(all || typeof object[prop] !== "function") {
+        details.push('<li>' + prop + ' => ' + object[prop] + '</li>');
+      }
     }
     return '<small><ul>' + details.join('\n') + '</ul></small>';
   }
