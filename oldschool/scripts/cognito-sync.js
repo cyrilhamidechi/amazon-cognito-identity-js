@@ -12,42 +12,66 @@ var CognitoSync = {
     CognitoSync.manager = new AWS.CognitoSyncManager();
     CognitoSync.htmlContainer = container;
   },
-  listDatasets: function (datasets) {
-    if(datasets) {
-      datasets.map(function(name) {
-        CognitoSync.synchronize(name.trim());
-      });
-    }
+  listDatasets: function () {
     CognitoSync.browsedDataset = null;
+    var remote = $('sync-remote-datasets').checked;
+    $('sync-remote-datasets').checked = false;
+    if (!remote) {
+      CognitoSync.listLocalDatasets();
+      return false;
+    }
+    CognitoSync.manager.remote.client.listDatasets({IdentityId: AWS.config.credentials.identityId, IdentityPoolId: CognitoSync.manager.identityPoolId}, function (err, data) {
+      CognitoSync.handleDatasetsList(err, data, true);
+    });
+    return true;
+  },
+  listLocalDatasets: function () {
     CognitoSync.manager.listDatasets(function (err, data) {
-      console.log(data);
-      if (err) {
-        console.log(err);  // an error occurred
-      }
-      else {
-        var names = [];
-        //todo: investigate why properties cases change when object is passed to a method
-        data.map(function (d) {
-          names.push('<a href="#" onclick=\'CognitoSync.browseDataset(' + d + ');\'>' + d.datasetName + '</a>');
-          names.push(' [<a href="#" onclick="CognitoSync.removeDataset(\'' + d.datasetName + '\');">X</a>]');
-          names.push('<br />');
-        });
-        names.push('<input placeholder="new dataset name" onblur="CognitoSync.createDataset(this.value);"/>');
-        CognitoSync.htmlContainer.fill(names);
+      CognitoSync.handleDatasetsList(err, data);
+    });
+    return true;
+  },
+  handleDatasetsList: function (err, data, synchronize) {
+    if (err) {
+      console.log(err);  // an error occurred
+      return false;
+    }
+    var datasets = data;
+    if (data.Datasets) {
+      datasets = data.Datasets;
+    }
+    var names = [];
+    var name = null;
+    datasets.map(function (dataset) {
+      name = dataset.datasetName || dataset.DatasetName;
+      names.push('<a href="#" onclick="CognitoSync.browseDataset(\'' + name + '\');">' + name + '</a>');
+      names.push(' [<a href="#" onclick="CognitoSync.removeDataset(\'' + name + '\');">X</a>]');
+      names.push('<br />');
+      if (synchronize) {
+        CognitoSync.synchronize(name, true);
       }
     });
+    names.push('<input placeholder="new dataset name" onblur="CognitoSync.createDataset(this.value);"/>');
+    CognitoSync.htmlContainer.fill(names);
+    return true;
   },
-  browseDataset: function (datasetDetails) {
-    CognitoSync.browsedDataset = datasetDetails;
-    var datasetName = datasetDetails.DatasetName;
+  browseDataset: function (datasetname) {
+    if (!datasetname && CognitoSync.currentDataset) {
+      datasetname = CognitoSync.currentDataset;
+    }
+    if (!datasetname) {
+      CognitoSync.listDatasets();
+      return false;
+    }
+    CognitoSync.currentDataset = datasetname;
     var datasetBrowsed = [];
-    datasetBrowsed.push('<h1>Browsing dataset [' + datasetName + ']</h1>');
-    datasetBrowsed.push('<input value="' + datasetName + '" onblur="CognitoSync.updateDatasetName(this.value);"/>');
+    datasetBrowsed.push('<h1>Browsing dataset [' + CognitoSync.currentDataset + ']</h1>');
+    datasetBrowsed.push('<input value="' + CognitoSync.currentDataset + '" onblur="CognitoSync.updateDatasetName(this.value);"/>');
     datasetBrowsed.push('<input type="button" value="synchronize" onclick="CognitoSync.synchronize();"/>');
-    datasetBrowsed.push(CognitoSync.htmlContainer.displayDetails(datasetDetails));
-    datasetBrowsed.push('<hr />');
 
-    CognitoSync.workOnDataset(datasetName, function (dataset) {
+    CognitoSync.workOnDataset(CognitoSync.currentDataset, function (dataset) {
+      datasetBrowsed.push(CognitoSync.htmlContainer.displayDetails(dataset));
+      datasetBrowsed.push('<hr />');
       dataset.getAllRecords(function (err, data) {
         if (err) {
           console.log(err);
@@ -79,25 +103,30 @@ var CognitoSync = {
     console.log('Creating dataset: ' + name);
     CognitoSync.workOnDataset(name, function (dataset) {
       console.log(dataset);
+      CognitoSync.browseDataset(name);
     });
   },
   //TODO
   updateDatasetName: function (newName) {
-    console.log('Renaming dataset: ' + CognitoSync.browsedDataset.DatasetName + ' => ' + newName);
+    console.log('Renaming dataset: ' + CognitoSync.currentDataset + ' => ' + newName);
     //do stuff
-    CognitoSync.browseDataset(CognitoSync.browsedDataset);
   },
   //TODO
   removeDataset: function (datasetName) {
     console.log('Removing dataset ' + datasetName);
     //do stuff
   },
-  putData: function (key, value) {
+  putData: function (key, value, datasetName) {
     key = key.trim();
     if (key.length < CognitoSync.MIN_LENGTH) {
-      return;
+      return false;
     }
-    var datasetName = CognitoSync.browsedDataset.DatasetName;
+
+    datasetName = CognitoSync.getDatasetName(datasetName);
+    if (!datasetName) {
+      return false;
+    }
+    
     console.log('Writing [' + key + ' => ' + value + '] into [' + datasetName + ']');
     CognitoSync.workOnDataset(datasetName, function (dataset) {
       dataset.put(key, value, function (err, data) {
@@ -105,12 +134,17 @@ var CognitoSync = {
       });
     });
   },
-  removeData: function (key) {
+  removeData: function (key, datasetName) {
     key = key.trim();
     if (key.length < CognitoSync.MIN_LENGTH) {
-      return;
+      return false;
     }
-    var datasetName = CognitoSync.browsedDataset.DatasetName;
+    
+    datasetName = CognitoSync.getDatasetName(datasetName);
+    if (!datasetName) {
+      return false;
+    }
+    
     console.log('Removing [' + key + '] from [' + datasetName + ']');
     CognitoSync.workOnDataset(datasetName, function (dataset) {
       dataset.remove(key, function (err, data) {
@@ -118,20 +152,20 @@ var CognitoSync = {
       });
     });
   },
-  synchronize: function (datasetName) {
-    if(!datasetName && CognitoSync.browsedDataset) {
-      datasetName = CognitoSync.browsedDataset.DatasetName;
-    }
-    if(!datasetName) {
-      return;
+  synchronize: function (datasetName, noop) {
+    datasetName = CognitoSync.getDatasetName(datasetName);
+    if (!datasetName) {
+      return false;
     }
     console.log('Synchronizing dataset [' + datasetName + ']');
     CognitoSync.workOnDataset(datasetName, function (dataset) {
-//      dataset.synchronize();
       dataset.synchronize({
         onSuccess: function (dataset, newRecords) {
           console.log('Successfully synchronized ' + newRecords.length + ' new records ' + datasetName + '.');
           console.log(dataset);
+          if (!noop) {
+            CognitoSync.browseDataset(CognitoSync.currentDataset);
+          }
         },
         onFailure: function (err) {
           console.log('Synchronization failed ' + datasetName + '.');
@@ -203,11 +237,21 @@ var CognitoSync = {
     if (err) {
       console.log(err);
     }
-    if (CognitoSync.browsedDataset) {
-      CognitoSync.browseDataset(CognitoSync.browsedDataset);
+    if (CognitoSync.currentDataset) {
+      CognitoSync.browseDataset(CognitoSync.currentDataset);
     }
     else {
       CognitoSync.listDatasets();
     }
+  },
+  getDatasetName: function (datasetname) {
+    if (!datasetname && CognitoSync.currentDataset) {
+      datasetname = CognitoSync.currentDataset;
+    }
+    if (!datasetname) {
+      CognitoSync.listDatasets();
+      return false;
+    }
+    return datasetname;
   }
 }

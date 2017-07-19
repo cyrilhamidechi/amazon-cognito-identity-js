@@ -3,6 +3,8 @@
 Status: pure chaotic R&D
 
 (noted for myself)
+- [ ] Cognito Sync to access to an API Gateway > Lambda (fake)
+- [ ] Cognito Sync to access to an API Gateway > Lambda > AuroraDB
 - [x] make each demo script point to a usable form (mainly blind dev)
 - [.] make forms work and dynamic (if static data)
 - [ ] refactoring forms (repetitive fields handling, ...) and adding better practices
@@ -12,7 +14,7 @@ Status: pure chaotic R&D
 - [ ] demo SMS confirmation
 - [ ] demo MFA
 - [ ] demo Cognito / Lambda interactions (creating a S3 folder for incoming registration)
-- [.] demo Cognito Sync
+- [x] demo Cognito Sync
 - [ ] demo advanced Cognito Sync (push, streams and events)
 - [ ] make signup form dynamic based on AWS Cognito form prefs (if possible, else make frontend flexible and config-driven)
 - [x] use Cognito to access to S3

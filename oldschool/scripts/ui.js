@@ -12,29 +12,13 @@ var UI = {
     UI.show('sync');
     UI.hide('s3');
     UI.hide('cog');
-//    AWS.config.credentials.get(function () {
-//      var syncManager = new AWS.CognitoSyncManager();
-//      syncManager.openOrCreateDataset('myDatasetName', function (err, dataset) {
-//        dataset.get('myKey', function (err, value) {
-//          console.log('myRecord: ' + value);
-//        });
-//
-//        dataset.put('newKey', 'newValue', function (err, record) {
-//          console.log(record);
-//        });
-//
-//        dataset.remove('oldKey', function (err, success) {
-//          console.log(success);
-//        });
-//      });
-//    });
-//    AWS.config.credentials.get(function () {
-//      CognitoSync.init(HtmlContainer.init('syncContent'));
-//      CognitoSync.listDatasets();
-//    });
+    if(CognitoSync.manager) {
+      CognitoSync.listDatasets();
+      return true;
+    }
     Cognito.loadMyDetails(function () {
       CognitoSync.init(HtmlContainer.init('syncContent'));
-      CognitoSync.listDatasets($('datasets-name').value.split(','));
+      CognitoSync.listDatasets();
     });
   },
   displayCog: function () {
