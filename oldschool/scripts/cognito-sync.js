@@ -59,11 +59,11 @@ var CognitoSync = {
     if (!datasetname && CognitoSync.currentDataset) {
       datasetname = CognitoSync.currentDataset;
     }
-    if (!datasetname) {
+    CognitoSync.currentDataset = datasetname;
+    if (!CognitoSync.currentDataset) {
       CognitoSync.listDatasets();
       return false;
     }
-    CognitoSync.currentDataset = datasetname;
     var datasetBrowsed = [];
     datasetBrowsed.push('<h1>Browsing dataset [' + CognitoSync.currentDataset + ']</h1>');
     datasetBrowsed.push('<input value="' + CognitoSync.currentDataset + '" onblur="CognitoSync.updateDatasetName(this.value);"/>');
