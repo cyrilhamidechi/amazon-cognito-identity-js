@@ -25,8 +25,6 @@ var Cognito = {
   },
   loadSession: function () {
 
-    UI.hide('loadsession');
-
     var userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool({
       UserPoolId: Cognito.CONF.UserPoolId,
       ClientId: Cognito.CONF.ClientId
@@ -50,19 +48,18 @@ var Cognito = {
     }
 
   },
-  signIn: function () {
+  logIn: function () {
 
     var login = $('login').value.trim();
     var pwd = $('pwd').value.trim();
-    if (login.length < 8 || pwd.length < 6) {
+    if (login.length < 4 || pwd.length < 4) {
       return;
     }
-
-    UI.hide('signin');
-    UI.show('signin-inprogress');
+    
+    UI.hideLoginActions();
 
     Cognito.user = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser({
-      Username: USER_CREDS.login,
+      Username: login,
       Pool: new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool({
         UserPoolId: Cognito.CONF.UserPoolId,
         ClientId: Cognito.CONF.ClientId
@@ -77,6 +74,7 @@ var Cognito = {
         Cognito.setCreds(result.getIdToken().getJwtToken());
       },
       onFailure: function (err) {
+        UI.showLoginActions();
         alert("Error:" + err);
       }
     });

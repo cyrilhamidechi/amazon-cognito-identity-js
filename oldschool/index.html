@@ -1,14 +1,14 @@
 <html>
-    <body onload="Cognito.initContext(); Cognito.loadSession();">
+    <body onload="UI.init(); Cognito.initContext(); Cognito.loadSession();">
         <div id="curtain" style="display:none;">
             <div id="logme">
                 <input type="text" id="login" placeholder="Login" /> |
                 <input type="password" id="pwd" placeholder="Password" /> |
-                <a id="signin" href="#" onclick="Cognito.signIn();">Sign in</a> |
-                <span id="signin-inprogress" style="display:none;">In progress...</span>
+                <select id="login-presets" onchange="UI.loadLoginPreset(this.value)"></select> |
+                <a id="login-button" href="#" onclick="Cognito.logIn();">Log in</a> |
+                <span id="login-inprogress" style="display:none;">In progress...</span>
             </div>
             <div>
-                <a id="loadsession" href="#" onclick="Cognito.loadSession();">load session</a> |
                 <a id="displayS3" href="#" onclick="UI.displayS3();">S3</a> |
                 <a id="displaySync" href="#" onclick="UI.displaySync();">view sync</a> |
                 <a id="mydetails" href="#" onclick="UI.displayCog();">my details</a> |

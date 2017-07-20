@@ -1,4 +1,12 @@
 var UI = {
+  init: function () {
+    var options = [];
+    options.push('<option value="-1"> - choose a presets - </option>');
+    USERS_CREDS.map(function(user, idx) {
+      options.push('<option value="' + idx + '">' + user.label + '</option>');
+    });
+    $('login-presets').innerHTML = options.join('');
+  },
   displayS3: function () {
     UI.hide('sync');
     UI.hide('cog');
@@ -27,9 +35,17 @@ var UI = {
     UI.hide('s3');
     UI.show('cog');
   },
+  loadLoginPreset: function (preset) {
+    if(preset < 0 || preset > USERS_CREDS.length) {
+      return false;
+    }
+    var user = USERS_CREDS[preset];
+    $('login').value = user.login;
+    $('pwd').value = user.pwd;
+    Cognito.logIn();
+  },
   showLoggedMenu: function () {
     UI.hide('logme');
-    UI.hide('loadsession');
     UI.show('displayS3');
     UI.show('displaySync');
     UI.show('mydetails');
@@ -38,10 +54,8 @@ var UI = {
     UI.show('curtain');
   },
   hideLoggedMenu: function () {
-    UI.show('signin');
-    UI.hide('signin-inprogress');
+    UI.showLoginActions();
     UI.show('logme');
-    UI.show('loadsession');
     UI.hide('displayS3');
     UI.hide('displaySync');
     UI.hide('s3');
@@ -50,9 +64,17 @@ var UI = {
     UI.hide('logout');
   },
   showLoginForm: function () {
-    $('login').value = USER_CREDS.login;
-    $('pwd').value = USER_CREDS.pwd;
     UI.hideLoggedMenu();
+  },
+  showLoginActions: function () {
+    UI.show('login-button');
+    UI.show('login-presets');
+    UI.hide('login-inprogress');
+  },
+  hideLoginActions: function () {
+    UI.hide('login-button');
+    UI.hide('login-presets');
+    UI.show('login-inprogress');
   },
   show: function (id) {
     UI.toggleDisplay(id, 'inline');

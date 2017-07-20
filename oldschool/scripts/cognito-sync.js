@@ -78,15 +78,13 @@ var CognitoSync = {
           CognitoSync.listDatasets();
           return;
         }
-        var idx = 0;
-        data.map(function (d) {
+        data.map(function (d, idx) {
           datasetBrowsed.push('<input id="syst-key' + idx + '" value="' + d.key + '"/>');
           datasetBrowsed.push('<input id="syst-value' + idx + '" value="' + d.value + '"/>');
           datasetBrowsed.push('<input type="button" value="set" onclick="CognitoSync.putData($(\'syst-key' + idx + '\').value, $(\'syst-value' + idx + '\').value);"/>');
           datasetBrowsed.push('<input type="button" value="X" onclick="CognitoSync.removeData($(\'syst-key' + idx + '\').value);"/>');
           datasetBrowsed.push(CognitoSync.htmlContainer.displayDetails(d));
           datasetBrowsed.push('<br />');
-          idx++;
         });
         datasetBrowsed.push('<input id="syst-newkey" placeholder="new key"/>');
         datasetBrowsed.push('<input id="syst-newvalue" placeholder="new value"/>');
