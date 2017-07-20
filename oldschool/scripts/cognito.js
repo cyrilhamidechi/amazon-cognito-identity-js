@@ -55,7 +55,7 @@ var Cognito = {
     if (login.length < 4 || pwd.length < 4) {
       return;
     }
-    
+
     UI.hideLoginActions();
 
     Cognito.user = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser({
@@ -118,7 +118,10 @@ var Cognito = {
     if (Cognito.user) {
       Cognito.user.signOut();
     }
+
     localStorage.clear();
+    CognitoSync.manager = null;
+    $('sync-remote-datasets').checked = true;
 
     Cognito.initContext();
     Cognito.isLogged();

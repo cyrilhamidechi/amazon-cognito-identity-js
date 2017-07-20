@@ -2,7 +2,7 @@ var UI = {
   init: function () {
     var options = [];
     options.push('<option value="-1"> - choose a presets - </option>');
-    USERS_CREDS.map(function(user, idx) {
+    USERS_CREDS.map(function (user, idx) {
       options.push('<option value="' + idx + '">' + user.label + '</option>');
     });
     $('login-presets').innerHTML = options.join('');
@@ -20,13 +20,12 @@ var UI = {
     UI.show('sync');
     UI.hide('s3');
     UI.hide('cog');
-    if(CognitoSync.manager) {
-      CognitoSync.listDatasets();
+    if (CognitoSync.manager) {
+      CognitoSync.init(HtmlContainer.init('syncContent'));
       return true;
     }
     Cognito.loadMyDetails(function () {
       CognitoSync.init(HtmlContainer.init('syncContent'));
-      CognitoSync.listDatasets();
     });
   },
   displayCog: function () {
@@ -36,7 +35,7 @@ var UI = {
     UI.show('cog');
   },
   loadLoginPreset: function (preset) {
-    if(preset < 0 || preset > USERS_CREDS.length) {
+    if (preset < 0 || preset > USERS_CREDS.length) {
       return false;
     }
     var user = USERS_CREDS[preset];

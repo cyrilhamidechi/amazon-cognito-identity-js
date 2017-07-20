@@ -11,6 +11,7 @@ var CognitoSync = {
   init: function (container) {
     CognitoSync.manager = new AWS.CognitoSyncManager();
     CognitoSync.htmlContainer = container;
+    CognitoSync.listDatasets();
   },
   listDatasets: function () {
     CognitoSync.browsedDataset = null;
@@ -124,7 +125,7 @@ var CognitoSync = {
     if (!datasetName) {
       return false;
     }
-    
+
     console.log('Writing [' + key + ' => ' + value + '] into [' + datasetName + ']');
     CognitoSync.workOnDataset(datasetName, function (dataset) {
       dataset.put(key, value, function (err, data) {
@@ -137,12 +138,12 @@ var CognitoSync = {
     if (key.length < CognitoSync.MIN_LENGTH) {
       return false;
     }
-    
+
     datasetName = CognitoSync.getDatasetName(datasetName);
     if (!datasetName) {
       return false;
     }
-    
+
     console.log('Removing [' + key + '] from [' + datasetName + ']');
     CognitoSync.workOnDataset(datasetName, function (dataset) {
       dataset.remove(key, function (err, data) {
@@ -159,8 +160,6 @@ var CognitoSync = {
     CognitoSync.workOnDataset(datasetName, function (dataset) {
       dataset.synchronize({
         onSuccess: function (dataset, newRecords) {
-          console.log('Successfully synchronized ' + newRecords.length + ' new records ' + datasetName + '.');
-          console.log(dataset);
           if (!noop) {
             CognitoSync.browseDataset(CognitoSync.currentDataset);
           }
