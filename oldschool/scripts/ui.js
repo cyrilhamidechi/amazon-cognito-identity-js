@@ -1,11 +1,19 @@
 var UI = {
   init: function () {
+    
     var options = [];
     options.push('<option value="-1"> - choose a presets - </option>');
     USERS_CREDS.map(function (user, idx) {
       options.push('<option value="' + idx + '">' + user.label + '</option>');
     });
     $('login-presets').innerHTML = options.join('');
+    
+    var apis = [];
+    API_ENDPOINTS.map(function (api, idx) {
+      apis.push('<a id="logout" href="#" onclick="API.request(\'GET\',\'' + api.url + '\');">' + api.label + '</a>');
+    });
+    $('api-demo').innerHTML = apis.join('<br />');
+    
   },
   displayS3: function () {
     UI.hide('sync');

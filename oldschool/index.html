@@ -12,8 +12,10 @@
                 <a id="displayS3" href="#" onclick="UI.displayS3();">S3</a> |
                 <a id="displaySync" href="#" onclick="UI.displaySync();">view sync</a> |
                 <a id="mydetails" href="#" onclick="UI.displayCog();">my details</a> |
-                <a id="logout" href="#" onclick="Cognito.logout();">logout</a>
+                <a id="logout" href="#" onclick="Cognito.logout();">logout</a> | 
             </div>
+            <div id="api-demo"></div>
+            <div id="api-demo-results"></div>
             <div id="cog">
                 <h3>Some details</h3>
                 <div id="cogcontent"></div>
@@ -33,6 +35,7 @@
         <script src="./lib/amazon-cognito.min.js"></script>
         <script src="./lib/amazon-cognito-identity.min.js"></script>
         <script src="./lib/fb-sdk.js"></script>
+        <script src="./scripts/api.js"></script>
         <script src="./scripts/html.js"></script>
         <script src="./scripts/s3.js"></script>
         <script src="./scripts/ui.js"></script>
