@@ -118,6 +118,7 @@ var Cognito = {
     if (Cognito.user) {
       Cognito.user.signOut();
     }
+    localStorage.clear();
 
     Cognito.initContext();
     Cognito.isLogged();
