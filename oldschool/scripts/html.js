@@ -14,10 +14,10 @@ var HtmlContainer = {
     }
     HtmlContainer.container.innerHTML = content;
   },
-  displayDetails: function(object, all) {
+  displayDetails: function (object, all) {
     var details = [];
-    for(var prop in object) {
-      if(all || typeof object[prop] !== "function") {
+    for (var prop in object) {
+      if (all || typeof object[prop] !== "function") {
         details.push('<li>' + prop + ' => ' + object[prop] + '</li>');
       }
     }

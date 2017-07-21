@@ -3,19 +3,19 @@ var API = {
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
       var result = HtmlContainer.displayDetails(xhr);
-      if(xhr.status && 200 === xhr.status) {
+      if (xhr.status && 200 === xhr.status) {
         result = xhr.response;
       }
       $('api-demo-results').innerHTML = result;
     };
     if (auth) {
       headers = headers || {};
-      if(Cognito.session) {
+      if (Cognito.session) {
         headers.Authorization = Cognito.session.getIdToken().getJwtToken();
-      } else {
+      }
+      else {
         console.log('API auth request > no session found');
       }
-
     }
     xhr.open(verb, endpoint, true);
     if (headers) {
