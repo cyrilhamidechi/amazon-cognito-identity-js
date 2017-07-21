@@ -4,8 +4,8 @@ Status: pure chaotic R&D
 
 (noted for myself)
 - [x] access to an API Gateway > Lambda (fake)
-- [.] access to an API Gateway > Lambda > returning specific Cognito user details
-- [ ] access to an API Gateway > Lambda > AuroraDB
+- [x] access to an API Gateway > Lambda > returning specific Cognito user details
+- [.] access to an API Gateway > Lambda > AuroraDB
 - [x] make each demo script point to a usable form (mainly blind dev)
 - [.] make forms work and dynamic (if static data)
 - [ ] refactoring forms (repetitive fields handling, ...) and adding better practices

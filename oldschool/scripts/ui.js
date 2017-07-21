@@ -9,8 +9,10 @@ var UI = {
     $('login-presets').innerHTML = options.join('');
     
     var apis = [];
+    var headers = null;
     API_ENDPOINTS.map(function (api, idx) {
-      apis.push('<a id="logout" href="#" onclick="API.request(\'GET\',\'' + api.url + '\');">' + api.label + '</a>');
+      headers = null;
+      apis.push('<a id="logout" href="#" onclick="API.request(\'GET\',\'' + api.url + '\', ' + api.auth + ');">' + api.label + '</a>');
     });
     $('api-demo').innerHTML = apis.join('<br />');
     

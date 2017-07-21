@@ -6,11 +6,13 @@ var Cognito = {
     ClientId: '7328r336bblcg28s42hau13u6c'
   },
   user: null,
+  session: null,
   userDetails: null,
   htmlContainer: null,
   initContext: function () {
 
-    Cognito.user = null;
+    Cognito.reset();
+
     Cognito.UserDetails = null;
     AWS.config.region = Cognito.CONF.region;
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
@@ -22,6 +24,12 @@ var Cognito = {
     HtmlContainer.init('syncContent');
     UI.hide('cog');
     Cognito.htmlContainer = HtmlContainer.init('cogcontent');
+  },
+  reset: function () {
+    Cognito.user = null;
+    Cognito.session = null;
+    Cognito.userDetails = null;
+    Cognito.htmlContainer = null;
   },
   loadSession: function () {
 
@@ -42,7 +50,8 @@ var Cognito = {
           return;
         }
 
-        Cognito.setCreds(session.idToken.jwtToken);
+        Cognito.session = session;
+        Cognito.setCreds(Cognito.session.idToken.jwtToken);
 
       });
     }
@@ -71,7 +80,8 @@ var Cognito = {
       Password: pwd
     }), {
       onSuccess: function (result) {
-        Cognito.setCreds(result.getIdToken().getJwtToken());
+        Cognito.session = result;
+        Cognito.setCreds(Cognito.session.getIdToken().getJwtToken());
       },
       onFailure: function (err) {
         UI.showLoginActions();
