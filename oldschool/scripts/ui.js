@@ -9,10 +9,19 @@ var UI = {
     $('login-presets').innerHTML = options.join('');
 
     var apis = [];
+    apis.push('dropdown POST / PUT / DELETE');
     var headers = null;
     API_ENDPOINTS.map(function (api, idx) {
       headers = null;
-      apis.push('<a id="logout" href="#" onclick="API.request(\'GET\',\'' + api.url + '\', ' + api.auth + ');">' + api.label + '</a>');
+      if(api.form) {
+        switch(api.form) {
+          case 'dynamodb':
+            apis.push('dynamodb demo form to POST / PUT / DELETE');
+            break;
+        }
+      } else {
+        apis.push('<a id="logout" href="#" onclick="API.request(\'GET\',\'' + api.url + '\', ' + api.auth + ');">' + api.label + '</a>');
+      }
     });
     $('api-demo').innerHTML = apis.join('<br />');
 
